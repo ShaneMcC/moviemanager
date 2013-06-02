@@ -1,0 +1,13 @@
+This is quite basic and limited in functionality, but it basically takes a folder of movies and presents them as a web page.
+
+To make the indexer more efficient, make sure there is a .nfo file that contains the movies imdb url somewhere in it, otherwise it will try and guess based on the directory name, which doesn't work as successfully.
+
+
+Getting Started:
+
+- Create a mysql database and put credentials into config.local.php (see config.php for value names)
+- Import moviemanager.sql into this new database
+- Let movie manager know where your movies live: `INSERT INTO directories VALUES (1,'/media/Movies');` or so.
+- Run the indexer: `php backend/indexer.php`
+
+You might want to cron the indexer to run a bit more frequently.
