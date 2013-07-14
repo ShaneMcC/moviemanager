@@ -15,7 +15,7 @@
 ?>
 
 <script>
-$('body').css('background-image', 'url("./poster.php?fanart&id=<?=$movie['id'];?>")');
+$('body').css('background-image', 'url("<?=BASEDIR;?>/fanart/<?=$movie['id'];?>")');
 $('body').css('background-size', '100%');
 $('body').css('background-repeat', 'no-repeat');
 $('body').css('background-attachment', 'fixed');
