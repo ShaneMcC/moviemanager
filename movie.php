@@ -11,17 +11,21 @@
 	$titleExtra = ' :: ' . $movie['name'];
 
 	include(dirname(__FILE__) . '/inc/header.php');
+	
 ?>
+
+<script>
+$('body').css('background-image', 'url("./poster.php?fanart&id=<?=$movie['id'];?>")');
+$('body').css('background-size', '100%');
+$('body').css('background-repeat', 'no-repeat');
+$('body').css('background-attachment', 'fixed');
+</script>
 
 <table id="moviedata"  class="table table-striped table-bordered table-condensed">
 	<tbody>
 		<tr class="movie">
 			<td class="fullposter" rowspan=<?=$rowspan?>><?php
-				if (empty($movie['poster']) || $movie['poster'] == 'N/A') {
-					$movie['poster'] = 'http://t0.gstatic.com/images?q=tbn:ANd9GcQalw3XeNDg49Z24Sy-KO5pLtfCYDnU87_kKkwnDiKWv8S2zz9IryY_SEJk';
-				}
-
-				echo '<img src="', $movie['poster'], '" alt="Poster" class="movieposter">';
+				echo '<img src="poster.php?id=', $movie['id'], '" alt="Poster" class="movieposter">';
 			?></td>
 			<th class="title">Title</th>
 			<td class="title"><?php
@@ -58,18 +62,26 @@
 			}
 		?>
 		<?php if (isset($omdb['imdbID'])) { ?>
+	</tbody>
+</table>
+<table id="trailerdata"  class="table table-striped table-bordered table-condensed">
+	<tbody>
 		<tr>
-			<th colspan=3>Trailer</th>
+			<th>Trailer</th>
 		</tr>
 		<tr>
-			<td colspan=3 id="trailercontainer">
+			<td id="trailercontainer">
 				<img src="inc/ajax-loader.gif" alt="..." />
 				<br>
 				<em><small>Loading trailer...</small></em>
 				<script>
 					// Get Trailer.
 					$.get('trailer.php?imdbID=<?=$omdb['imdbID']?>', '', function(data) {
-						$('#trailercontainer').html(data);
+						if (data) {
+							$('#trailercontainer').html(data);
+						} else {
+							$('#trailerdata').hide();
+						}
 					});
 				</script>
 			</td>

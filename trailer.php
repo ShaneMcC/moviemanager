@@ -4,6 +4,7 @@
 	$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
 
 	$trailers = getTrailerByIMDB($imdbid);
+	if (count($trailers) == 0) { die(); }
 ?>
 <div id="trailers" class="accordion">
 	<?php $i = 0; foreach ($trailers as $t) { ?>

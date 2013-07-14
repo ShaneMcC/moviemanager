@@ -5,7 +5,13 @@
 	$remotePoster = false;
 	$poster = $movie['poster'];
 
-	if (file_exists($movie['dir'] . '/movie.tbn')) {
+	if (isset($_REQUEST['fanart'])) {
+		if (file_exists($movie['dir'] . '/fanart.jpg')) {	
+			$poster = $movie['dir'] . '/fanart.jpg';
+		} else {
+			die();
+		}
+	} else if (file_exists($movie['dir'] . '/movie.tbn')) {
 		$poster = $movie['dir'] . '/movie.tbn';
 	} else {
 		$remotePoster = true;

@@ -93,3 +93,16 @@ tr.movie td.poster img {
 #trailercontainer {
 	text-align: center;
 }
+
+#moviedata td.fullposter {
+	max-width: 33%;
+	width: 33%;
+}
+
+.table-striped tbody>tr:nth-child(even)>td,.table-striped tbody>tr:nth-child(even)>th {
+	background: #FFFFFF;
+}
+
+.accordion-heading {
+	background: #FFFFFF;
+}
