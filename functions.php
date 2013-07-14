@@ -73,7 +73,7 @@
 			$omdb = new OMDB();
 			list($result, $data) = $omdb->findByIMDB('tt'.$id);
 			$name = str_replace(' ', '-', strtolower($data['Title']));
-			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name); 
+			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
 			foreach($trailers->trailer as $trailer) {
 				$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
 			}
