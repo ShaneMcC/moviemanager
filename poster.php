@@ -3,22 +3,27 @@
 	
 	$movie = getMovieData($_REQUEST['id']);
 	$remotePoster = false;
-	$poster = $movie['poster'];
 
 	if (isset($_REQUEST['fanart'])) {
 		if (file_exists($movie['dir'] . '/fanart.jpg')) {	
 			$poster = $movie['dir'] . '/fanart.jpg';
 		} else {
-			die();
+			foreach (glob($movie['dir'] . '/*-fanart.jpg') as $fanart) {
+				$poster = $fanart;
+				break;
+			}
 		}
 	} else if (file_exists($movie['dir'] . '/movie.tbn')) {
 		$poster = $movie['dir'] . '/movie.tbn';
-	} else {
+	} else if (empty($movie['poster']) || $movie['poster'] == 'N/A') {
+		$poster = 'http://t0.gstatic.com/images?q=tbn:ANd9GcQalw3XeNDg49Z24Sy-KO5pLtfCYDnU87_kKkwnDiKWv8S2zz9IryY_SEJk';
 		$remotePoster = true;
-		if (empty($movie['poster']) || $movie['poster'] == 'N/A') {
-			$poster = 'http://t0.gstatic.com/images?q=tbn:ANd9GcQalw3XeNDg49Z24Sy-KO5pLtfCYDnU87_kKkwnDiKWv8S2zz9IryY_SEJk';
-		}
+	} else {
+		$poster = $movie['poster'];
+		$remotePoster = true;
 	}
+
+	if (empty($poster)) { die(); }
 
 	if ($remotePoster) {
 		$ch = curl_init($poster);
