@@ -5,17 +5,22 @@
 
 	$trailers = getTrailerByIMDB($imdbid);
 ?>
-<div id="trailers" class="tabbable">
-	<ul class="nav nav-tabs">
-		<?php $i = 0; foreach ($trailers as $t) { ?>
-			<li class="<?=($i == 0 ? 'active' : '')?>"><a href="#trailer-<?=$i++?>" data-toggle="tab"><?=htmlspecialchars($t['title']);?></a></li>
-		<?php } ?>
-	</ul>
-	<div class="tab-content">
-		<?php $i = 0; foreach ($trailers as $t) { ?>
-		<div class="tab-pane <?=($i == 0 ? 'active' : '')?>" id="trailer-<?=$i++?>">
-			<?=$t['embed']?>
+<div id="trailers" class="accordion">
+	<?php $i = 0; foreach ($trailers as $t) { ?>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#trailers" href="#trailer<?=$i?>">
+					<?=htmlspecialchars($t['title']);?>
+				</a>
+			</div>
+			<div id="trailer<?=$i++?>" class="accordion-body collapse in">
+				<div class="accordion-inner">
+					<?=$t['embed']?>
+				</div>
+			</div>
 		</div>
-		<?php } ?>
-	</div>
+	<?php } ?>
 </div>
+<script type="text/javascript">
+	$(".collapse").collapse()
+</script>
