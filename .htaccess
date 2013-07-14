@@ -1,3 +1,4 @@
+Options -Multiviews
 RewriteEngine on
 RewriteRule "^(.*/)?\.git/" - [L,R=404]
 

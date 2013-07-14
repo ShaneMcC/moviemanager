@@ -51,7 +51,7 @@
 				echo '<img src="poster/', $movie['id'], '" alt="Poster" class="movieposter">';
 			?></td>
 			<td class="title" colspan=2><?php
-				echo '<a href="movie.php?id=', $movie['id'], '">';
+				echo '<a href="movie/', $movie['id'], '">';
 				if (!empty($movie['name'])) {
 					echo $movie['name'];
 				} else {
