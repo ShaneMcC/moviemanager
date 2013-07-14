@@ -30,14 +30,14 @@
 						<a class="brand" href="#">Movie Manager</a>
 						<div class="nav">
 							<ul class="nav">
-								<li  class="active" ><a href="./">Home</a></li>
+								<li  class="active" ><a href="<?=BASEDIR?>">Home</a></li>
 							</ul>
 						</div>
-						<div class="nav pull-right">
+						<!-- <div class="nav pull-right">
 							<ul class="nav">
-								<li ><a href="./admin.php">Admin</a></li>
+								<li ><a href="<?=BASEDIR?>./admin.php">Admin</a></li>
 							</ul>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
