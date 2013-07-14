@@ -61,10 +61,12 @@
 	}
 	
 	function getTrailerByIMDB($id) {
-		$trailer = simplexml_load_file('http://api.traileraddict.com/?width=900&imdb='.$id); 
-		foreach($trailer->trailer as $x => $updates) {
-			return $updates->embed;
-		} 
+		$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$id); 
+		$result = array();
+		foreach($trailers->trailer as $trailer) {
+			$result[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
+		}
+		return $result;
 	}
 
 	function setMovieData($id, $data) {
