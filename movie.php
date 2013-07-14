@@ -73,7 +73,7 @@ $('body').css('background-attachment', 'fixed');
 		</tr>
 		<tr>
 			<td id="trailercontainer">
-				<img src="inc/ajax-loader.gif" alt="..." />
+				<img src="<?=BASEDIR?>inc/ajax-loader.gif" alt="..." />
 				<br>
 				<em><small>Loading trailer...</small></em>
 				<script>
