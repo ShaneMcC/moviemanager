@@ -2,7 +2,11 @@
 	require_once(dirname(__FILE__) . '/config.php');
 	require_once(dirname(__FILE__) . '/api/OMDB.php');
 
-	define(BASEDIR, dirname($_SERVER['SCRIPT_NAME']) . '/');
+	if (isset($_SERVER['SCRIPT_NAME'])) {
+		define('BASEDIR', dirname($_SERVER['SCRIPT_NAME']) . '/');
+	} else {
+		define('BASEDIR', dirname(__FILE__) . '/');
+	}
 
 	function getDB() {
 		global $__db, $config;
