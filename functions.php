@@ -59,14 +59,27 @@
 
 		return $data;
 	}
-	
+
 	function getTrailerByIMDB($id) {
+		$trailerlist = array();
+
 		$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$id); 
-		$result = array();
 		foreach($trailers->trailer as $trailer) {
-			$result[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
+			$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
 		}
-		return $result;
+
+		if (count($trailerlist) == 0) {
+			// Failed by imdbid, try by name instead.
+			$omdb = new OMDB();
+			list($result, $data) = $omdb->findByIMDB('tt'.$id);
+			$name = str_replace(' ', '-', strtolower($data['Title']));
+			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name); 
+			foreach($trailers->trailer as $trailer) {
+				$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
+			}
+		}
+
+		return $trailerlist;
 	}
 
 	function setMovieData($id, $data) {
