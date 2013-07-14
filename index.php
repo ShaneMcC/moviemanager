@@ -48,11 +48,7 @@
 	?>
 		<tr class="movie">
 			<td class="poster" rowspan=3><?php
-				if (empty($movie['poster']) || $movie['poster'] == 'N/A') {
-					$movie['poster'] = 'http://t0.gstatic.com/images?q=tbn:ANd9GcQalw3XeNDg49Z24Sy-KO5pLtfCYDnU87_kKkwnDiKWv8S2zz9IryY_SEJk';
-				}
-
-				echo '<img src="', $movie['poster'], '" alt="Poster" class="movieposter">';
+				echo '<img src="poster.php?id=', $movie['id'], '" alt="Poster" class="movieposter">';
 			?></td>
 			<td class="title" colspan=2><?php
 				echo '<a href="movie.php?id=', $movie['id'], '">';
