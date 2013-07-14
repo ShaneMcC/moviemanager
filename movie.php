@@ -24,9 +24,11 @@ $('body').css('background-attachment', 'fixed');
 <table id="moviedata"  class="table table-striped table-bordered table-condensed">
 	<tbody>
 		<tr class="movie">
-			<td class="fullposter" rowspan=<?=$rowspan?>><?php
+			<td class="fullposter" rowspan=<?=$rowspan?>>
+			<ul class="thumbnails"><li><a href="#" class="thumbnail"><?php
 				echo '<img src="', BASEDIR, '/poster/', $movie['id'], '" alt="Poster" class="movieposter">';
-			?></td>
+			?></a></li></ul>
+			</td>
 			<th class="title">Title</th>
 			<td class="title"><?php
 				if (!empty($movie['name'])) {

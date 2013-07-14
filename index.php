@@ -40,16 +40,18 @@
 			$sg[] = strtolower($g);
 			$sg = array_unique($sg);
 			$sg = implode(',', $sg);
-			$g = '<a href="?genre=' . urlencode($sg) . '">' . ucfirst($g) . '</a>';
+			$g = '<a href="?genre=' . urlencode($sg) . '"><span class="badge badge-info">' . ucfirst($g) . '</span></a>';
 		}
-		$genres = implode(', ', $genres);
+		$genres = implode(' ', $genres);
 
 		$rating = isset($omdb['imdbRating']) ? $omdb['imdbRating'] : 'Unknown';
 	?>
 		<tr class="movie">
-			<td class="poster" rowspan=3><?php
+			<td class="poster" rowspan=3>
+			<ul class="thumbnails"><li><a href="#" class="thumbnail"><?php
 				echo '<img src="poster/', $movie['id'], '" alt="Poster" class="movieposter">';
-			?></td>
+			?></a></li></ul>
+			</td>
 			<td class="title" colspan=2><?php
 				echo '<a href="movie/', $movie['id'], '">';
 				if (!empty($movie['name'])) {
