@@ -1,9 +1,7 @@
 <?php
 	require_once(dirname(__FILE__) . '/functions.php');
-	$imdbid = preg_replace('/^tt/', '', $_REQUEST['imdbID']);
-	$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
 
-	$trailers = getTrailerByIMDB($imdbid);
+	$trailers = getTrailerByID($_REQUEST['id']);
 	if (count($trailers) == 0) { die(); }
 ?>
 <div id="trailers" class="accordion">

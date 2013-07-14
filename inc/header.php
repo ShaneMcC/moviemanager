@@ -9,13 +9,13 @@
 
 	<!-- Bootstrap -  http://twitter.github.com/bootstrap/index.html -->
 	<!-- Using Icons from GlyphIcons - http://glyphicons.com/ -->
-	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?=BASEDIR?>/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<!-- <link href="./bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"> -->
 
-	<link href="./inc/style.css" rel="stylesheet">
+	<link href="<?=BASEDIR?>/inc/style.css" rel="stylesheet">
 
-	<script src="./bootstrap/js/jquery.js"></script>
-	<script src="./bootstrap/js/bootstrap.min.js"></script>
+	<script src="<?=BASEDIR?>/bootstrap/js/jquery.js"></script>
+	<script src="<?=BASEDIR?>/bootstrap/js/bootstrap.min.js"></script>
 
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->

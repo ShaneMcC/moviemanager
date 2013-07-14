@@ -1,0 +1,8 @@
+RewriteEngine on
+RewriteRule "^(.*/)?\.git/" - [L,R=404]
+
+RewriteRule ^/?poster/([0-9]+) poster.php?id=$1 [L]
+RewriteRule ^/?fanart/([0-9]+) poster.php?fanart&id=$1 [L]
+RewriteRule ^/?trailer/([0-9]+) trailer.php?id=$1 [L]
+RewriteRule ^/?movie/([0-9]+) movie.php?id=$1 [L]
+

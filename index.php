@@ -48,7 +48,7 @@
 	?>
 		<tr class="movie">
 			<td class="poster" rowspan=3><?php
-				echo '<img src="poster.php?id=', $movie['id'], '" alt="Poster" class="movieposter">';
+				echo '<img src="poster/', $movie['id'], '" alt="Poster" class="movieposter">';
 			?></td>
 			<td class="title" colspan=2><?php
 				echo '<a href="movie.php?id=', $movie['id'], '">';

@@ -25,7 +25,7 @@ $('body').css('background-attachment', 'fixed');
 	<tbody>
 		<tr class="movie">
 			<td class="fullposter" rowspan=<?=$rowspan?>><?php
-				echo '<img src="poster.php?id=', $movie['id'], '" alt="Poster" class="movieposter">';
+				echo '<img src="', BASEDIR, '/poster/', $movie['id'], '" alt="Poster" class="movieposter">';
 			?></td>
 			<th class="title">Title</th>
 			<td class="title"><?php
@@ -76,7 +76,7 @@ $('body').css('background-attachment', 'fixed');
 				<em><small>Loading trailer...</small></em>
 				<script>
 					// Get Trailer.
-					$.get('trailer.php?imdbID=<?=$omdb['imdbID']?>', '', function(data) {
+					$.get('<?=BASEDIR?>trailer/<?=$movie['id']?>', '', function(data) {
 						if (data) {
 							$('#trailercontainer').html(data);
 						} else {

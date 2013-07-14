@@ -2,6 +2,8 @@
 	require_once(dirname(__FILE__) . '/config.php');
 	require_once(dirname(__FILE__) . '/api/OMDB.php');
 
+	define(BASEDIR, dirname($_SERVER['SCRIPT_NAME']) . '/');
+
 	function getDB() {
 		global $__db, $config;
 
@@ -60,10 +62,15 @@
 		return $data;
 	}
 
-	function getTrailerByIMDB($id) {
+	function getTrailerByID($id) {
+		$movie = getMovieData($id);
+		$o = unserialize($movie['omdb']);
+		$imdbid = preg_replace('/^tt/', '', $o['imdbID']);
+		$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
+
 		$trailerlist = array();
 
-		$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$id); 
+		$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid); 
 		foreach($trailers->trailer as $trailer) {
 			$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
 		}
@@ -71,7 +78,7 @@
 		if (count($trailerlist) == 0) {
 			// Failed by imdbid, try by name instead.
 			$omdb = new OMDB();
-			list($result, $data) = $omdb->findByIMDB('tt'.$id);
+			list($result, $data) = $omdb->findByIMDB('tt'.$imdbid);
 			$name = str_replace(' ', '-', strtolower($data['Title']));
 			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
 			foreach($trailers->trailer as $trailer) {
