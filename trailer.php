@@ -13,7 +13,7 @@
 					<?=htmlspecialchars($t['title']);?>
 				</a>
 			</div>
-			<div id="trailer<?=$i++?>" class="accordion-body collapse in">
+			<div class="accordion-body collapse <?=($i == 0 ? '' : 'in')?>" id="trailer<?=$i++?>">
 				<div class="accordion-inner">
 					<?=$t['embed']?>
 				</div>
