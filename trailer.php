@@ -2,7 +2,7 @@
 	require_once(dirname(__FILE__) . '/functions.php');
 	$imdbid = preg_replace('/^tt/', '', $_REQUEST['imdbID']);
 	$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
-	
+
 	$trailers = getTrailerByIMDB($imdbid);
 ?>
 <div id="trailers" class="tabbable">
