@@ -31,7 +31,7 @@
 	function getMovies() {
 		$db = getDB();
 
-		$statement = $db->prepare('SELECT * FROM movies');
+		$statement = $db->prepare('SELECT * FROM movies ORDER BY name');
 		$statement->execute();
 		$movies = $statement->fetchAll(PDO::FETCH_ASSOC);
 
