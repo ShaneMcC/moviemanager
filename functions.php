@@ -66,7 +66,7 @@
 		return $data;
 	}
 
-	function getTrailerByID($id) {
+	function getTrailerByID($id, $type = null) {
 		$movie = getMovieData($id);
 		$o = unserialize($movie['omdb']);
 		$imdbid = preg_replace('/^tt/', '', $o['imdbID']);
@@ -74,9 +74,11 @@
 
 		$trailerlist = array();
 
-		$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid); 
-		foreach($trailers->trailer as $trailer) {
-			$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
+		if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_id') {
+			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid); 
+			foreach($trailers->trailer as $trailer) {
+				$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' > 'traileraddict_id');
+			}
 		}
 
 		if (count($trailerlist) == 0) {
@@ -84,9 +86,34 @@
 			$omdb = new OMDB();
 			list($result, $data) = $omdb->findByIMDB('tt'.$imdbid);
 			$name = str_replace(' ', '-', strtolower($data['Title']));
-			$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
-			foreach($trailers->trailer as $trailer) {
-				$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed);
+			if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_name') {
+				$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
+				foreach($trailers->trailer as $trailer) {
+					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' > 'traileraddict_name');
+				}
+			}
+
+			if (count($trailerlist) == 0) {
+				// How annoying, we still found no trailers from traileraddict :(
+				// Fallback to youtube...
+				if ($type == null || $type == 'youtube' ) {
+					$url = 'https://gdata.youtube.com/feeds/api/videos?orderby=relevance&format=5&max-results=10&v=2&alt=json&q=' . urlencode($data['Title'] . ' trailer');
+					$items = @json_decode(@file_get_contents($url), true);
+
+					foreach ($items['feed']['entry'] as $entry) {
+						$title = $entry['title']['$t'];
+						$content = $entry['content']['src'];
+						$id = $entry['id']['$t'];
+						$embed = '';
+						$embed .= '<object type="application/x-shockwave-flash" style="width:900px;height:506px;">';
+						$embed .= '<param name="movie" value="' . $content. '&amp;rel=0&amp;hd=1&amp;showsearch=0" />';
+						$embed .= '<param name="allowFullScreen" value="true" />';
+						$embed .= '<param name="allowscriptaccess" value="always" />';
+						$embed .= '</object>';
+
+						$trailerlist[] = array('title' => $title, 'embed' => $embed, 'type' > 'youtube');
+					}
+				}
 			}
 		}
 
