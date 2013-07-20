@@ -2,7 +2,7 @@
 	require_once(dirname(__FILE__) . '/functions.php');
 	include(dirname(__FILE__) . '/inc/header.php');
 
-	$movies = getMovies();
+	$movies = Movie::getMovies();
 	$searchGenres = isset($_REQUEST['genre']) ? explode(',', strtolower($_REQUEST['genre'])) : array();
 ?>
 
@@ -20,7 +20,7 @@
 
 	<tbody>
 	<?php foreach ($movies as $movie) {
-		$omdb = unserialize($movie['omdb']);
+		$omdb = unserialize($movie->omdb);
 
 		$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
 
@@ -49,22 +49,22 @@
 		<tr class="movie">
 			<td class="poster" rowspan=3>
 			<ul class="thumbnails"><li><a href="#" class="thumbnail"><?php
-				echo '<img src="poster/', $movie['id'], '" alt="Poster" class="movieposter">';
+				echo '<img src="poster/', $movie->id, '" alt="Poster" class="movieposter">';
 			?></a></li></ul>
 			</td>
 			<td class="title" colspan=2><?php
-				echo '<a href="movie/', $movie['id'], '">';
-				if (!empty($movie['name'])) {
-					echo $movie['name'];
+				echo '<a href="movie/', $movie->id, '">';
+				if (!empty($movie->name)) {
+					echo $movie->name;
 				} else {
-					echo $movie['dirname'];
+					echo $movie->dirname;
 					echo ' <span class="label label-important">Unknown</span>';
 				}
 				echo '</a>';
 			?></td>
 			<td class="links" rowspan=3><?php
-				if (!empty($movie['imdbid']) && $movie['imdbid'] != 'N/A') {
-					echo '<a href="http://www.imdb.com/title/', $movie['imdbid'], '/"><span class="label label-success">IMDB</span></a>';
+				if (!empty($movie->imdbid) && $movie->imdbid != 'N/A') {
+					echo '<a href="http://www.imdb.com/title/', $movie->imdbid, '/"><span class="label label-success">IMDB</span></a>';
 				} else {
 					echo '<span class="label label-important">IMDB</span>';
 				}

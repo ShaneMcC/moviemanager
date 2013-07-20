@@ -10,44 +10,41 @@
 		$path = $dir['path'] . '/';
 		$pathid = $dir['id'];
 
-		foreach (scandir($path) as $movie) {
-			if ($movie == '.' || $movie == '..') { continue; }
-			if (!is_dir($path . $movie)) { continue; }
+		foreach (scandir($path) as $moviedir) {
+			if ($moviedir == '.' || $moviedir == '..') { continue; }
+			if (!is_dir($path . $moviedir)) { continue; }
 
-			$id = getMovieIDFromDir($pathid, $movie);
-			$data = getMovieData($id);
+			$movie = Movie::getFromDir($pathid, $moviedir);
 
-			if (empty($data['name'])) {
-				echo 'Found new movie: ', $movie, "\n";
+			if (empty($movie->name)) {
+				echo 'Found new movie: ', $moviedir, "\n";
 
-				if (empty($data['imdbid'])) {
+				if (empty($movie->imdbid)) {
 					echo "\t", 'No IMDB ID Known.', "\n";
 					
-					foreach (glob($data['dir'] . '/*.nfo') as $nfo) {
+					foreach (glob($movie->dir . '/*.nfo') as $nfo) {
 						echo "\t\t", 'Found nfo: ', $nfo, "\n";
 						$nfo = file_get_contents($nfo);
 						if (preg_match("#(?:http://www.imdb.com/title/|<id>)(tt[0-9]+)(?:/|</id>)#", $nfo, $m)) {
 							echo "\t\t\t", 'Found IMDB ID: ', $m[1], "\n";
-							setMovieData($id, array('imdbid' => $m[1]));
-							$data['imdbid'] = $m[1];
+							$movie->setData(array('imdbid' => $m[1]));
 							break;
 						}
 					}
 
-					if (empty($data['imdbid']) && preg_match('/^(.*) \(([0-9]+)\)$/', $movie, $m)) {
+					if (empty($movie->imdbid) && preg_match('/^(.*) \(([0-9]+)\)$/', $moviedir, $m)) {
 						echo "\t\t", 'No useful nfo, guessing from title', "\n";
 						list($result, $res) = $omdb->findByNameAndYear($m[1], $m[2]);
 						
 						if ($result) {
 							echo "\t\t\t", 'Found IMDB ID: ', $res['imdbID'], "\n";
-							setMovieData($id, array('imdbid' => $res['imdbID']));
-							$data['imdbid'] = $res['imdbID'];
+							$movie->setData(array('imdbid' => $res['imdbID']));
 						}
 					}
 				}
 
-				if (!empty($data['imdbid'])) {
-					list($result, $data) = $omdb->findByIMDB($data['imdbid']);
+				if (!empty($movie->imdbid)) {
+					list($result, $data) = $omdb->findByIMDB($movie->imdbid);
 					if ($result) {
 						$newData = array();
 
@@ -63,7 +60,7 @@
 						// TODO: Be less shit.
 						$newData['omdb'] = serialize($data);
 
-						setMovieData($id, $newData);
+						$movie->setData($newData);
 						echo "\t", 'Detected movie as: ', $newData['name'], "\n";
 					}
 				} else {

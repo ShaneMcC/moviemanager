@@ -1,7 +1,7 @@
 <?php
 	require_once(dirname(__FILE__) . '/functions.php');
 
-	$trailers = getTrailerByID($_REQUEST['id']);
+	$trailers = Movie::getFromID($_REQUEST['id'])->getTrailers();
 	if (count($trailers) == 0) { die(); }
 ?>
 <div id="trailers" class="accordion">
