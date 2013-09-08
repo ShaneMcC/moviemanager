@@ -47,7 +47,7 @@
 		$rating = isset($omdb['imdbRating']) ? $omdb['imdbRating'] : 'Unknown';
 	?>
 		<tr class="movie">
-			<td class="poster" rowspan=3>
+			<td class="poster" rowspan=4>
 			<ul class="thumbnails"><li><a href="#" class="thumbnail"><?php
 				echo '<img src="poster/', $movie->id, '" alt="Poster" class="movieposter">';
 			?></a></li></ul>
@@ -62,7 +62,7 @@
 				}
 				echo '</a>';
 			?></td>
-			<td class="links" rowspan=3><?php
+			<td class="links" rowspan=4><?php
 				if (!empty($movie->imdbid) && $movie->imdbid != 'N/A') {
 					echo '<a href="http://www.imdb.com/title/', $movie->imdbid, '/"><span class="label label-success">IMDB</span></a>';
 				} else {
@@ -78,6 +78,10 @@
 		<tr>
 			<th class="rating">Rating</td>
 			<td class="rating"><?=$rating?></td>
+		</tr>
+		<tr>
+			<th class="plot">Plot</td>
+			<td class="plot"><?=$omdb['Plot']?></td>
 		</tr>
 	<?php } ?>
 	</tbody>
