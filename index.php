@@ -83,8 +83,10 @@
 					echo ' <span class="label label-important">Unknown</span>';
 				}
 				echo '</a>';
-				if (isset($omdb['Released'])) {
+				if (isset($omdb['Released']) && $omdb['Released'] != "N/A") {
 					echo '<div class="pull-right">', $omdb['Released'], '</div>';
+				} else if (isset($omdb['Year'])) {
+					echo '<div class="pull-right">', $omdb['Year'], '</div>';
 				}
 			?></td>
 			<td class="links" rowspan=4><?php

@@ -27,13 +27,13 @@
 	<body>			<div class="navbar navbar-fixed-top">
 				<div class="navbar-inner">
 					<div class="container">
-						<a class="brand" href="#">Movie Manager</a>
-						<div class="nav">
+						<a class="brand" href="<?=BASEDIR?>">Movie Manager</a>
+						<!-- <div class="nav">
 							<ul class="nav">
 								<li  class="active" ><a href="<?=BASEDIR?>">Home</a></li>
 							</ul>
 						</div>
-						<!-- <div class="nav pull-right">
+						<div class="nav pull-right">
 							<ul class="nav">
 								<li ><a href="<?=BASEDIR?>./admin.php">Admin</a></li>
 							</ul>
