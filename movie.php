@@ -11,7 +11,7 @@
 	$titleExtra = ' :: ' . $movie->name;
 
 	include(dirname(__FILE__) . '/inc/header.php');
-	
+
 ?>
 
 <script>

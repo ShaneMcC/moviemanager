@@ -99,6 +99,10 @@ tr.movie .thumbnails>li {
 	margin-bottom: auto !important;
 }
 
+.btn.pull-right {
+	margin: 0 5px;
+}
+
 /**********************************************************************
  * Movie Information
  **********************************************************************/

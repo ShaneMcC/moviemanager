@@ -6,9 +6,14 @@
 	$searchGenres = isset($_REQUEST['genre']) ? explode(',', strtolower($_REQUEST['genre'])) : array();
 ?>
 
-<?php if (!empty($searchGenres)) { ?>
-<a class="btn btn-primary pull-right" href="?">Clear Search</a><br><br>
+<a class="btn btn-success pull-right" href="?random=10<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 10</a>
+<a class="btn btn-success pull-right" href="?random=5<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 5</a>
+<a class="btn btn-success pull-right" href="?random=1<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 1</a>
+<?php if (!empty($searchGenres) || isset($_REQUEST['random'])) { ?>
+<a class="btn btn-primary pull-right" href="?">Clear Modifiers</a>
 <?php } ?>
+<br>
+<br>
 <table id="movieslist"  class="table table-striped table-bordered table-condensed">
 	<thead>
 		<tr class="header">
@@ -19,7 +24,9 @@
 	</thead>
 
 	<tbody>
-	<?php foreach ($movies as $movie) {
+	<?php
+	$showMovies = array();
+	foreach ($movies as $movie) {
 		$omdb = unserialize($movie->omdb);
 
 		$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
@@ -34,6 +41,21 @@
 			}
 		}
 		if ($ignore) { continue; }
+		$showMovies[] = $movie;
+	}
+
+	if (isset($_REQUEST['random']) && is_numeric($_REQUEST['random']) && $_REQUEST['random'] > 0) {
+		$keys = array_rand($showMovies, min((int)$_REQUEST['random'], count($showMovies)));
+		if (!is_array($keys)) { $keys = array($keys); }
+		$randMovies = array();
+		foreach ($keys as $key) { $randMovies[] = $showMovies[$key]; }
+		$showMovies = $randMovies;
+	}
+
+	foreach ($showMovies as $movie) {
+		$omdb = unserialize($movie->omdb);
+
+		$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
 
 		foreach ($genres as &$g) {
 			$sg = $searchGenres;
@@ -61,6 +83,9 @@
 					echo ' <span class="label label-important">Unknown</span>';
 				}
 				echo '</a>';
+				if (isset($omdb['Released'])) {
+					echo '<div class="pull-right">', $omdb['Released'], '</div>';
+				}
 			?></td>
 			<td class="links" rowspan=4><?php
 				if (!empty($movie->imdbid) && $movie->imdbid != 'N/A') {
