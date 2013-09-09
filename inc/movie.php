@@ -81,7 +81,7 @@
 		public static function getMovies() {
 			$db = getDB();
 
-			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND us.userid = :userid ORDER BY name');
+			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND uw.userid = :userid ORDER BY name');
 			$statement->execute(array(':userid' => getUser()->getUserID()));
 			$movies = $statement->fetchAll(PDO::FETCH_ASSOC);
 
