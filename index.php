@@ -17,20 +17,23 @@
 
 <?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
 
-<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>"><i class="icon-eye-open"></i></a>
-<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>"><i class="icon-film"></i></a>
-<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>"><i class="icon-star"></i></a>
-<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>"><i class="icon-star-empty"></i></a>
+<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>" data-toggle="tooltip" title="Show only watched films"><i class="icon-eye-open"></i></a>
+<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>" data-toggle="tooltip" title="Show only unwatched films"><i class="icon-film"></i></a>
+<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>" data-toggle="tooltip" title="Show only starred films"><i class="icon-star"></i></a>
+<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>" data-toggle="tooltip" title="Show only unstarred films"><i class="icon-star-empty"></i></a>
 
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 10</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 5</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 1</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 10 random films"><i class="icon-random"></i> 10</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 5 random films"><i class="icon-random"></i> 5</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 1 random film"><i class="icon-random"></i> 1</a>
 
 <?php if (!empty($searchGenres) || isset($_REQUEST['random']) || isset($_REQUEST['starred']) || isset($_REQUEST['watched'])) { ?>
-	<a class="btn btn-danger pull-right" href="?"><i class="icon-remove"></i> Clear Modifiers</a>
+	<a class="btn btn-danger pull-right" href="?" data-toggle="tooltip" title="Remove all list modifiers"><i class="icon-remove"></i> Clear Modifiers</a>
 <?php } ?>
 <br>
 <br>
+<script type="text/javascript">
+	$('[data-toggle="tooltip"]').tooltip();
+</script>
 <table id="movieslist"  class="table table-striped table-bordered table-condensed">
 	<thead>
 		<tr class="header">
@@ -107,13 +110,15 @@
 					echo $movie->dirname;
 					echo ' <span class="label label-important">Unknown</span>';
 				}
-				echo '</a>';
-				if (isset($omdb['Released']) && $omdb['Released'] != "N/A") {
-					echo '<div class="pull-right">', $omdb['Released'], '</div>';
-				} else if (isset($omdb['Year'])) {
-					echo '<div class="pull-right">', $omdb['Year'], '</div>';
+				if (isset($omdb['Year'])) {
+					echo ' (', $omdb['Year'], ')';
 				}
-			?></td>
+				echo '</a>';
+			?>
+				<div class="pull-right movieicons">
+					<?=showMovieIcons($movie);?>
+				</div>
+			</td>
 			<td class="links" rowspan=4><?php
 				if (!empty($movie->imdbid) && $movie->imdbid != 'N/A') {
 					echo '<a href="http://www.imdb.com/title/', $movie->imdbid, '/"><span class="label label-success">IMDB</span></a>';

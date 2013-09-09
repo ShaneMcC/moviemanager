@@ -39,71 +39,11 @@ $('body').css('background-attachment', 'fixed');
 					echo $movie->dirname;
 					echo ' <span class="label label-important">Unknown</span>';
 				}
-
-				if ($movie->starred) {
-					$staricon = 'icon-star';
-					$starcaption = 'Starred';
-				} else {
-					$staricon = 'icon-star-empty';
-					$starcaption = 'Not starred';
-				}
-
-				if ($movie->watched) {
-					$watchedicon = 'icon-eye-open';
-					$watchedcaption = 'Watched';
-				} else {
-					$watchedicon = 'icon-film';
-					$watchedcaption = 'Not watched';
-				}
 			?>
 
-				<div class="pull-right movieicons">
-					<i id="staricon" class="<?=$staricon?>" data-toggle="tooltip" title="<?=$starcaption?>"></i>
-					<i id="watchicon" class="<?=$watchedicon?>" data-toggle="tooltip" title="<?=$watchedcaption?>"></i>
-				</div>
-
-				<script>
-					function toggleWatched() {
-						$.get('<?=BASEDIR?>setwatched/<?=$movie->id?>', '', function(data) {
-							if (data) {
-								if (data == 'true') {
-									updateIcon($('#watchicon'), 'icon-eye-open', 'Watched')
-								} else {
-									updateIcon($('#watchicon'), 'icon-film', 'Not watched')
-								}
-							}
-						});
-					}
-
-					function toggleStarred() {
-						$.get('<?=BASEDIR?>setstarred/<?=$movie->id?>', '', function(data) {
-							if (data) {
-								if (data == 'true') {
-									updateIcon($('#staricon'), 'icon-star', 'Starred')
-								} else {
-									updateIcon($('#staricon'), 'icon-star-empty', 'Not starred')
-								}
-							}
-						});
-					}
-
-					function updateIcon(elem, icon, tooltip) {
-						elem.removeClass();
-						elem.addClass(icon);
-						elem.attr('title', tooltip);
-						elem.tooltip('destroy');
-						elem.tooltip();
-						if (elem.is(":hover")) {
-							elem.tooltip('show');
-						}
-					}
-
-					$(document).ready(function(){
-						$('[data-toggle="tooltip"]').tooltip();
-						$('#watchicon').click(function() { toggleWatched(); });
-						$('#staricon').click(function() { toggleStarred(); });
-					});
-				</script>
+			<div class="pull-right movieicons">
+			<?=showMovieIcons($movie);?>
+			</div>
 
 			</th>
 		</tr>

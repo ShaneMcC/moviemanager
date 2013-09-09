@@ -43,4 +43,26 @@
 
 		return $__currentUser;
 	}
+
+	function showMovieIcons($movie) {
+		if ($movie->starred) {
+			$staricon = 'icon-star';
+			$starcaption = 'Starred';
+		} else {
+			$staricon = 'icon-star-empty';
+			$starcaption = 'Not starred';
+		}
+
+		if ($movie->watched) {
+			$watchedicon = 'icon-eye-open';
+			$watchedcaption = 'Watched';
+		} else {
+			$watchedicon = 'icon-film';
+			$watchedcaption = 'Not watched';
+		}
+		?>
+		<i class="staricon <?=$staricon?>" data-movieid="<?=$movie->id?>" data-toggle="tooltip" title="<?=$starcaption?>" onclick="toggleStarred()"></i>
+		<i class="watchicon <?=$watchedicon?>" data-movieid="<?=$movie->id?>" data-toggle="tooltip" title="<?=$watchedcaption?>" onclick="toggleWatched()"></i>
+		<?php
+	}
 ?>

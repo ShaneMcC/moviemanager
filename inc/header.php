@@ -44,7 +44,45 @@
 			</div>
 
 			<script type="text/javascript">
+				function toggleWatched() {
+					target = $(event.target);
+					$.get('<?=BASEDIR?>setwatched/' + target.data('movieid'), '', function(data) {
+						if (data) {
+							if (data == 'true') {
+								updateIcon(target, 'icon-eye-open', 'Watched')
+							} else {
+								updateIcon(target, 'icon-film', 'Not watched')
+							}
+						}
+					});
+				}
+
+				function toggleStarred() {
+					target = $(event.target);
+					$.get('<?=BASEDIR?>setstarred/' + target.data('movieid'), '', function(data) {
+						if (data) {
+							if (data == 'true') {
+								updateIcon(target, 'icon-star', 'Starred')
+							} else {
+								updateIcon(target, 'icon-star-empty', 'Not starred')
+							}
+						}
+					});
+				}
+
+				function updateIcon(elem, icon, tooltip) {
+					elem.removeClass();
+					elem.addClass(icon);
+					elem.attr('title', tooltip);
+					elem.tooltip('destroy');
+					elem.tooltip();
+					if (elem.is(":hover")) {
+						elem.tooltip('show');
+					}
+				}
+
 				$('.dropdown-toggle').dropdown();
-			</script>	<div class="container">
+			</script>
+			<div class="container">
 
 
