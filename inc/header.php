@@ -32,12 +32,13 @@
 							<ul class="nav">
 								<li  class="active" ><a href="<?=BASEDIR?>">Home</a></li>
 							</ul>
-						</div>
+						</div> -->
 						<div class="nav pull-right">
 							<ul class="nav">
-								<li ><a href="<?=BASEDIR?>./admin.php">Admin</a></li>
+								<!-- <li ><a href="<?=BASEDIR?>./admin.php">Admin</a></li> -->
+								<li ><a href="#"><?=getUser()->getUsername()?></a></li>
 							</ul>
-						</div> -->
+						</div>
 					</div>
 				</div>
 			</div>

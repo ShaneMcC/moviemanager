@@ -4,13 +4,30 @@
 
 	$movies = Movie::getMovies();
 	$searchGenres = isset($_REQUEST['genre']) ? explode(',', strtolower($_REQUEST['genre'])) : array();
+	$linkGenres = empty($searchGenres) ? '' : '&genre=' . implode(',', $searchGenres);
+	$linkRandom = isset($_REQUEST['random']) ? '&random=' . $_REQUEST['random'] : '';
+	$linkStarred = isset($_REQUEST['starred']) ? '&starred=' . $_REQUEST['starred'] : '';
+	$linkWatched = isset($_REQUEST['watched']) ? '&watched=' . $_REQUEST['watched'] : '';
+
+	$checkWatched = isset($_REQUEST['watched']) && $_REQUEST['watched'] == '1';
+	$checkUnwatched = isset($_REQUEST['watched']) && $_REQUEST['watched'] == '0';
+	$checkStarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '1';
+	$checkUnstarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '0';
 ?>
 
-<a class="btn btn-success pull-right" href="?random=10<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 10</a>
-<a class="btn btn-success pull-right" href="?random=5<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 5</a>
-<a class="btn btn-success pull-right" href="?random=1<?php if (!empty($searchGenres)) { echo '&genre=' . implode(',', $searchGenres); } ?>">Random 1</a>
-<?php if (!empty($searchGenres) || isset($_REQUEST['random'])) { ?>
-<a class="btn btn-primary pull-right" href="?">Clear Modifiers</a>
+<?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
+
+<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>"><i class="icon-eye-open"></i></a>
+<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>"><i class="icon-film"></i></a>
+<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>"><i class="icon-star"></i></a>
+<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>"><i class="icon-star-empty"></i></a>
+
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 10</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 5</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>"><i class="icon-random"></i> 1</a>
+
+<?php if (!empty($searchGenres) || isset($_REQUEST['random']) || isset($_REQUEST['starred']) || isset($_REQUEST['watched'])) { ?>
+	<a class="btn btn-danger pull-right" href="?"><i class="icon-remove"></i> Clear Modifiers</a>
 <?php } ?>
 <br>
 <br>
@@ -25,49 +42,57 @@
 
 	<tbody>
 	<?php
-	$showMovies = array();
-	foreach ($movies as $movie) {
-		$omdb = unserialize($movie->omdb);
+		// Get the list of valid movies.
+		$showMovies = array();
+		foreach ($movies as $movie) {
+			$omdb = unserialize($movie->omdb);
 
-		$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
+			$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
 
-		// Check if this film is in the genres we care about,
-		$ignore = false;
-		if (!empty($searchGenres)) {
-			foreach ($searchGenres as $g) {
-				if (!in_array($g, $genres)) {
-					$ignore = true;
+			// Check if this film is in the genres we care about,
+			$ignore = false;
+			if (!empty($searchGenres)) {
+				foreach ($searchGenres as $g) {
+					if (!in_array($g, $genres)) {
+						$ignore = true;
+					}
 				}
 			}
+
+			// Check if we care about starred/non-starred
+			if (isset($_REQUEST['starred']) && $movie->starred != $_REQUEST['starred']) { $ignore = true; }
+
+			// Same for watched/unwatched.
+			if (isset($_REQUEST['watched']) && $movie->watched != $_REQUEST['watched']) { $ignore = true; }
+
+			if ($ignore) { continue; }
+			$showMovies[] = $movie;
 		}
-		if ($ignore) { continue; }
-		$showMovies[] = $movie;
-	}
 
-	if (isset($_REQUEST['random']) && is_numeric($_REQUEST['random']) && $_REQUEST['random'] > 0) {
-		$keys = array_rand($showMovies, min((int)$_REQUEST['random'], count($showMovies)));
-		if (!is_array($keys)) { $keys = array($keys); }
-		$randMovies = array();
-		foreach ($keys as $key) { $randMovies[] = $showMovies[$key]; }
-		$showMovies = $randMovies;
-	}
-
-	foreach ($showMovies as $movie) {
-		$omdb = unserialize($movie->omdb);
-
-		$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
-
-		foreach ($genres as &$g) {
-			$sg = $searchGenres;
-			$sg[] = strtolower($g);
-			$sg = array_unique($sg);
-			$sg = implode(',', $sg);
-			$g = '<a href="?genre=' . urlencode($sg) . '"><span class="badge badge-info">' . ucfirst($g) . '</span></a>';
+		if (isset($_REQUEST['random']) && is_numeric($_REQUEST['random']) && $_REQUEST['random'] > 0) {
+			$keys = array_rand($showMovies, min((int)$_REQUEST['random'], count($showMovies)));
+			if (!is_array($keys)) { $keys = array($keys); }
+			$randMovies = array();
+			foreach ($keys as $key) { $randMovies[] = $showMovies[$key]; }
+			$showMovies = $randMovies;
 		}
-		$genres = implode(' ', $genres);
 
-		$rating = isset($omdb['imdbRating']) ? $omdb['imdbRating'] : 'Unknown';
-	?>
+		foreach ($showMovies as $movie) {
+			$omdb = unserialize($movie->omdb);
+
+			$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
+
+			foreach ($genres as &$g) {
+				$sg = $searchGenres;
+				$sg[] = strtolower($g);
+				$sg = array_unique($sg);
+				$sg = implode(',', $sg);
+				$g = '<a href="?genre=' . urlencode($sg) . $linkRandom . $linkStarred . $linkWatched . '"><span class="badge badge-info">' . ucfirst($g) . '</span></a>';
+			}
+			$genres = implode(' ', $genres);
+
+			$rating = isset($omdb['imdbRating']) ? $omdb['imdbRating'] : 'Unknown';
+		?>
 		<tr class="movie">
 			<td class="poster" rowspan=4>
 			<ul class="thumbnails"><li><a href="#" class="thumbnail"><?php

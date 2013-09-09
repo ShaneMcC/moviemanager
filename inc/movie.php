@@ -15,7 +15,7 @@
 			$trailerlist = array();
 
 			if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_id') {
-				$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid); 
+				$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid);
 				foreach($trailers->trailer as $trailer) {
 					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' > 'traileraddict_id');
 				}
@@ -74,15 +74,15 @@
 
 			$statement = $db->prepare('UPDATE movies SET ' . implode(', ', $sql) . ' WHERE id = :id');
 			$statement->execute($params);
-			
+
 			foreach ($data as $k => $v) { $this->$k = $v; }
 		}
-		
+
 		public static function getMovies() {
 			$db = getDB();
 
-			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir FROM movies AS m JOIN directories AS d ON d.id = m.pathid ORDER BY name');
-			$statement->execute();
+			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND us.userid = :userid ORDER BY name');
+			$statement->execute(array(':userid' => getUser()->getUserID()));
 			$movies = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 			$result = array();
@@ -91,17 +91,17 @@
 			}
 			return $result;
 		}
-		
+
 		public static function getFromID($id) {
 			$db = getDB();
 
-			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir FROM movies AS m JOIN directories AS d ON d.id = m.pathid WHERE m.id = :id');
-			$statement->execute(array(':id' => $id));
+			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND us.userid = :userid WHERE m.id = :id');
+			$statement->execute(array(':id' => $id, ':userid' => getUser()->getUserID()));
 			$data = $statement->fetch(PDO::FETCH_ASSOC);
 
-			return new Movie($data);
+			return ($data === false) ? FALSE : new Movie($data);
 		}
-		
+
 		public static function getFromDir($pathid, $dirname) {
 			$db = getDB();
 

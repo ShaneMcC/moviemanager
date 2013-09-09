@@ -2,6 +2,7 @@
 	require_once(dirname(__FILE__) . '/config.php');
 	require_once(dirname(__FILE__) . '/api/OMDB.php');
 	require_once(dirname(__FILE__) . '/inc/movie.php');
+	require_once(dirname(__FILE__) . '/inc/user.php');
 
 	if (isset($_SERVER['SCRIPT_NAME'])) {
 		define('BASEDIR', dirname($_SERVER['SCRIPT_NAME']) . '/');
@@ -27,5 +28,19 @@
 		$dirs = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 		return $dirs;
+	}
+
+	function getUser() {
+		global $__currentUser;
+
+		if (!isset($__currentUser)) {
+			if (isset($_SERVER['REMOTE_ADDR'])) {
+				$__currentUser = User::getUserByName($_SERVER['REMOTE_ADDR'], true);
+			} else {
+				$__currentUser = User::getNullUser();
+			}
+		}
+
+		return $__currentUser;
 	}
 ?>
