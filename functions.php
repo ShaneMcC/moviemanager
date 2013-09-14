@@ -65,4 +65,13 @@
 		<i class="watchicon <?=$watchedicon?>" data-movieid="<?=$movie->id?>" data-toggle="tooltip" title="<?=$watchedcaption?>" onclick="toggleWatched()"></i>
 		<?php
 	}
+
+
+	require_once(dirname(__FILE__) . '/functions.local.php');
+
+	if (!function_exists('foundNewMovie')) {
+		function foundNewMovie($movie) {
+			/* Do Nothing */
+		}
+	}
 ?>

@@ -21,7 +21,7 @@
 
 				if (empty($movie->imdbid)) {
 					echo "\t", 'No IMDB ID Known.', "\n";
-					
+
 					foreach (glob($movie->dir . '/*.nfo') as $nfo) {
 						echo "\t\t", 'Found nfo: ', $nfo, "\n";
 						$nfo = file_get_contents($nfo);
@@ -35,7 +35,7 @@
 					if (empty($movie->imdbid) && preg_match('/^(.*) \(([0-9]+)\)$/', $moviedir, $m)) {
 						echo "\t\t", 'No useful nfo, guessing from title', "\n";
 						list($result, $res) = $omdb->findByNameAndYear($m[1], $m[2]);
-						
+
 						if ($result) {
 							echo "\t\t\t", 'Found IMDB ID: ', $res['imdbID'], "\n";
 							$movie->setData(array('imdbid' => $res['imdbID']));
@@ -62,6 +62,7 @@
 
 						$movie->setData($newData);
 						echo "\t", 'Detected movie as: ', $newData['name'], "\n";
+						foundNewMovie($movie);
 					}
 				} else {
 					echo "\t", 'Unable to find movie data.', "\n";
