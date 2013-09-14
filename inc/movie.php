@@ -78,11 +78,11 @@
 			foreach ($data as $k => $v) { $this->$k = $v; }
 		}
 
-		public static function getMovies() {
+		public static function getMovies($deleted = false) {
 			$db = getDB();
 
-			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND uw.userid = :userid ORDER BY name');
-			$statement->execute(array(':userid' => getUser()->getUserID()));
+			$statement = $db->prepare('SELECT m.*, CONCAT(d.path, "/", m.dirname) AS dir, not ISNULL(us.userid) AS starred, not ISNULL(uw.userid) AS watched FROM movies AS m JOIN directories AS d ON d.id = m.pathid LEFT JOIN userstars AS us ON us.movieid = m.id AND us.userid = :userid LEFT JOIN userwatched AS uw ON uw.movieid = m.id AND uw.userid = :userid WHERE deleted = :deleted ORDER BY name');
+			$statement->execute(array(':userid' => getUser()->getUserID(), ':deleted' => $deleted ? 'true' : 'false'));
 			$movies = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 			$result = array();

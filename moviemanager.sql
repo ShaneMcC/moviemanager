@@ -56,6 +56,7 @@ CREATE TABLE `movies` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+ALTER TABLE `movies` ADD COLUMN `deleted` ENUM('true', 'false') NOT NULL DEFAULT 'false'  AFTER `omdb` ;
 
 --
 -- Dumping data for table `movies`

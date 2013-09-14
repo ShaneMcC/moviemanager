@@ -66,11 +66,68 @@
 		<?php
 	}
 
+	function getIMDBIDFromDir($movie, $debug = false) {
+		$nfos = array();
+		// Prioritise original NFO first...
+		$nfos = array_merge($nfos, glob($movie->dir . '/*.orig.nfo'));
+		$nfos = array_merge($nfos, glob($movie->dir . '/*.nfo'));
+
+		foreach ($nfos as $nfo) {
+			if ($debug) { echo "\t\t", 'Found nfo: ', $nfo, "\n"; }
+			$nfo = file_get_contents($nfo);
+			if (preg_match("#(?:http://www.imdb.com/title/|<id>)(tt[0-9]+)(?:/|</id>)#", $nfo, $m)) {
+				if ($debug) { echo "\t\t\t", 'Found IMDB ID: ', $m[1], "\n"; }
+				return $m[1];
+				break;
+			}
+		}
+
+		if (preg_match('/^(.*) \(([0-9]+)\)$/', $movie->dirname, $m)) {
+			$omdb = new OMDB();
+			if ($debug) { echo "\t\t", 'No useful nfo, guessing from title', "\n"; }
+			list($result, $res) = $omdb->findByNameAndYear($m[1], $m[2]);
+
+			if ($result) {
+				if ($debug) { echo "\t\t\t", 'Found IMDB ID: ', $res['imdbID'], "\n"; }
+				return $res['imdbID'];
+			}
+		}
+
+		return FALSE;
+	}
+
+	function getOMDBDataForMovie($imdbid) {
+		$omdb = new OMDB();
+		list($result, $data) = $omdb->findByIMDB($imdbid);
+		if ($result) {
+			$newData = array();
+
+			$newData['name'] = $data['Title'];
+			if ($data['Poster'] != 'N/A') {
+				$newData['poster'] = $data['Poster'];
+			}
+
+			// Categories
+			// Actors
+			// Directors
+
+			// TODO: Be less shit.
+			$newData['omdb'] = serialize($data);
+
+			return $newData;
+		}
+
+		return FALSE;
+	}
 
 	require_once(dirname(__FILE__) . '/functions.local.php');
 
 	if (!function_exists('foundNewMovie')) {
 		function foundNewMovie($movie) {
+			/* Do Nothing */
+		}
+
+		function removedMovie($movie) {
 			/* Do Nothing */
 		}
 	}
