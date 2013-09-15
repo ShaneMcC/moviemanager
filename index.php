@@ -16,7 +16,7 @@
 	$checkStarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '1';
 	$checkUnstarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '0';
 
-	$linkSearch = isset($_REQUEST['search']) ? '&search=' . urlencode($_REQUEST['search']) : '';
+	$linkSearch = isset($_REQUEST['search']) && !empty($_REQUEST['search']) ? '&search=' . urlencode($_REQUEST['search']) : '';
 ?>
 
 <?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
@@ -80,7 +80,7 @@
 			if (isset($_REQUEST['watched']) && $movie->watched != $_REQUEST['watched']) { $ignore = true; }
 
 			// Holy crap, we also search!?
-			if (isset($_REQUEST['search'])) {
+			if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {
 				$searchFor = strtolower($_REQUEST['search']);
 				$title = strtolower($movie->name);
 				if (preg_match('#^s?/(.*)/$#', $searchFor, $matches)) {
