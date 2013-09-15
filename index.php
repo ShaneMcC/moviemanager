@@ -3,6 +3,8 @@
 	include(dirname(__FILE__) . '/inc/header.php');
 
 	$movies = Movie::getMovies();
+
+	/** TODO: This bit all sucks, but it's a quick hack that so it'll do for now. */
 	$searchGenres = isset($_REQUEST['genre']) ? explode(',', strtolower($_REQUEST['genre'])) : array();
 	$linkGenres = empty($searchGenres) ? '' : '&genre=' . implode(',', $searchGenres);
 	$linkRandom = isset($_REQUEST['random']) ? '&random=' . $_REQUEST['random'] : '';
@@ -13,18 +15,27 @@
 	$checkUnwatched = isset($_REQUEST['watched']) && $_REQUEST['watched'] == '0';
 	$checkStarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '1';
 	$checkUnstarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '0';
+
+	$linkSearch = isset($_REQUEST['search']) ? '&search=' . urlencode($_REQUEST['search']) : '';
 ?>
 
 <?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
 
-<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>" data-toggle="tooltip" title="Show only watched films"><i class="icon-eye-open"></i></a>
-<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?>" data-toggle="tooltip" title="Show only unwatched films"><i class="icon-film"></i></a>
-<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>" data-toggle="tooltip" title="Show only starred films"><i class="icon-star"></i></a>
-<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?>" data-toggle="tooltip" title="Show only unstarred films"><i class="icon-star-empty"></i></a>
+<div class="pull-left">
+	<form class="form-search" method="post" action="?<?=$linkRandom?><?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>">
+		<input type="text" name="search" class="input-medium search-query" value="<?=htmlspecialchars($_REQUEST['search'])?>">
+		<button type="submit" class="btn">Search</button>
+	</form>
+</div>
 
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 10 random films"><i class="icon-random"></i> 10</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 5 random films"><i class="icon-random"></i> 5</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>" data-toggle="tooltip" title="Pick 1 random film"><i class="icon-random"></i> 1</a>
+<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Show only watched films"><i class="icon-eye-open"></i></a>
+<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Show only unwatched films"><i class="icon-film"></i></a>
+<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?><?=$linkSearch?>" data-toggle="tooltip" title="Show only starred films"><i class="icon-star"></i></a>
+<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?><?=$linkSearch?>" data-toggle="tooltip" title="Show only unstarred films"><i class="icon-star-empty"></i></a>
+
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 10 random films"><i class="icon-random"></i> 10</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 5 random films"><i class="icon-random"></i> 5</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 1 random film"><i class="icon-random"></i> 1</a>
 
 <?php if (!empty($searchGenres) || isset($_REQUEST['random']) || isset($_REQUEST['starred']) || isset($_REQUEST['watched'])) { ?>
 	<a class="btn btn-danger pull-right" href="?" data-toggle="tooltip" title="Remove all list modifiers"><i class="icon-remove"></i> Clear Modifiers</a>
@@ -67,6 +78,23 @@
 
 			// Same for watched/unwatched.
 			if (isset($_REQUEST['watched']) && $movie->watched != $_REQUEST['watched']) { $ignore = true; }
+
+			// Holy crap, we also search!?
+			if (isset($_REQUEST['search'])) {
+				$searchFor = strtolower($_REQUEST['search']);
+				$title = strtolower($movie->name);
+				if (preg_match('#^s?/(.*)/$#', $searchFor, $matches)) {
+					// Regex match if user starts with s/ or / and ends with /
+					if (!preg_match('/' . $matches[1] . '/', $title)) { $ignore = true; }
+				} else if (strpos($searchFor, '*') !== FALSE || strpos($searchFor, '?') !== FALSE) {
+					// wildcard match if user has * or ? anywhere in the search string
+					// http://www.php.net/manual/en/function.fnmatch.php#71725
+					if (!preg_match("#".strtr(preg_quote($searchFor, '#'), array('\*' => '.*', '\?' => '.'))."#", $title)) { $ignore = true; }
+				} else {
+					// otherwise, just search where the given string is anywhere in the title.
+					if (strpos($title, $searchFor) === false) { $ignore = true; }
+				}
+			}
 
 			if ($ignore) { continue; }
 			$showMovies[] = $movie;
