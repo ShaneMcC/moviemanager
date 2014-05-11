@@ -4,40 +4,54 @@
 
 	$movies = Movie::getMovies();
 
-	/** TODO: This bit all sucks, but it's a quick hack that so it'll do for now. */
 	$searchGenres = isset($_REQUEST['genre']) ? explode(',', strtolower($_REQUEST['genre'])) : array();
-	$linkGenres = empty($searchGenres) ? '' : '&genre=' . implode(',', $searchGenres);
-	$linkRandom = isset($_REQUEST['random']) ? '&random=' . $_REQUEST['random'] : '';
-	$linkStarred = isset($_REQUEST['starred']) ? '&starred=' . $_REQUEST['starred'] : '';
-	$linkWatched = isset($_REQUEST['watched']) ? '&watched=' . $_REQUEST['watched'] : '';
 
 	$checkWatched = isset($_REQUEST['watched']) && $_REQUEST['watched'] == '1';
 	$checkUnwatched = isset($_REQUEST['watched']) && $_REQUEST['watched'] == '0';
 	$checkStarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '1';
 	$checkUnstarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '0';
 
-	$linkSearch = isset($_REQUEST['search']) && !empty($_REQUEST['search']) ? '&search=' . urlencode($_REQUEST['search']) : '';
+	$hasModifiers = isset($_REQUEST['genre']) || isset($_REQUEST['random']) || isset($_REQUEST['starred']) || isset($_REQUEST['watched']) || (isset($_REQUEST['search']) && !empty($_REQUEST['search']));
+	$hasShowAll = isset($_REQUEST['showAll']);
 
-	$hasModifiers = !empty($linkGenres) || !empty($linkRandom) || !empty($linkStarred) || !empty($linkWatched) || !empty($linkSearch) || isset($_REQUEST['showAll']);
+	function linkUrl($changes = array()) {
+		parse_str($_SERVER['QUERY_STRING'], $query);
+		return http_build_query(array_merge($query, $changes));
+	}
+
+	function genreLabels($genres) {
+		global $searchGenres;
+
+		foreach ($genres as &$g) {
+			$sg = $searchGenres;
+			$sg[] = strtolower($g);
+			$sg = array_unique($sg);
+			$sg = implode(',', $sg);
+			$badgeType = in_array($g, $searchGenres) ? 'success' : 'info';
+			$g = '<a href="?' . linkURL(array('genre' => $sg)) . '"><span class="badge badge-' . $badgeType . '">' . ucfirst($g) . '</span></a>';
+		}
+
+		return implode(' ', $genres);
+	}
 ?>
 
 <?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
 
 <div class="pull-left">
-	<form class="form-search" method="post" action="?<?=$linkRandom?><?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>">
+	<form class="form-search" method="post" action="?<?=linkURL()?>">
 		<input type="text" name="search" class="input-medium search-query" value="<?=htmlspecialchars(isset($_REQUEST['search']) ? $_REQUEST['search'] : '')?>">
 		<button type="submit" class="btn">Search</button>
 	</form>
 </div>
 
-<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=1<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Show only watched films"><i class="icon-eye-open"></i></a>
-<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?watched=0<?=$linkGenres?><?=$linkRandom?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Show only unwatched films"><i class="icon-film"></i></a>
-<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=1<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?><?=$linkSearch?>" data-toggle="tooltip" title="Show only starred films"><i class="icon-star"></i></a>
-<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?starred=0<?=$linkGenres?><?=$linkRandom?><?=$linkWatched?><?=$linkSearch?>" data-toggle="tooltip" title="Show only unstarred films"><i class="icon-star-empty"></i></a>
+<a class="btn <?=($checkWatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('watched' => 1))?>" data-toggle="tooltip" title="Show only watched films"><i class="icon-eye-open"></i></a>
+<a class="btn <?=($checkUnwatched) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('watched' => 0))?>" data-toggle="tooltip" title="Show only unwatched films"><i class="icon-film"></i></a>
+<a class="btn <?=($checkStarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('starred' => 1))?>" data-toggle="tooltip" title="Show only starred films"><i class="icon-star"></i></a>
+<a class="btn <?=($checkUnstarred) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('starred' => 0))?>" data-toggle="tooltip" title="Show only unstarred films"><i class="icon-star-empty"></i></a>
 
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=10<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 10 random films"><i class="icon-random"></i> 10</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=5<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 5 random films"><i class="icon-random"></i> 5</a>
-<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?random=1<?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>" data-toggle="tooltip" title="Pick 1 random film"><i class="icon-random"></i> 1</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 10) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('random' => 10))?>" data-toggle="tooltip" title="Pick 10 random films"><i class="icon-random"></i> 10</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 5) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('random' => 5))?>" data-toggle="tooltip" title="Pick 5 random films"><i class="icon-random"></i> 5</a>
+<a class="btn <?=(isset($_REQUEST['random']) && $_REQUEST['random'] == 1) ? 'btn-success' : 'btn-info'?> pull-right" href="?<?=linkURL(array('random' => 1))?>" data-toggle="tooltip" title="Pick 1 random film"><i class="icon-random"></i> 1</a>
 
 <?php if (!empty($searchGenres) || isset($_REQUEST['random']) || isset($_REQUEST['starred']) || isset($_REQUEST['watched'])) { ?>
 	<a class="btn btn-danger pull-right" href="?" data-toggle="tooltip" title="Remove all list modifiers"><i class="icon-remove"></i> Clear Modifiers</a>
@@ -111,21 +125,13 @@
 		}
 
 		$hadMovies = $showMovies;
-		if (count($movies) > 200 && !$hasModifiers) { $showMovies = array(); }
+		if (count($movies) > 200 && !$hasShowAll) { $showMovies = array(); }
 
 		foreach ($showMovies as $movie) {
 			$omdb = unserialize($movie->omdb);
 
 			$genres = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
-
-			foreach ($genres as &$g) {
-				$sg = $searchGenres;
-				$sg[] = strtolower($g);
-				$sg = array_unique($sg);
-				$sg = implode(',', $sg);
-				$g = '<a href="?genre=' . urlencode($sg) . $linkRandom . $linkStarred . $linkWatched . '"><span class="badge badge-info">' . ucfirst($g) . '</span></a>';
-			}
-			$genres = implode(' ', $genres);
+			$genres = genreLabels($genres);
 
 			$rating = isset($omdb['imdbRating']) ? $omdb['imdbRating'] : 'Unknown';
 		?>
@@ -179,7 +185,20 @@
 		<tr>
 			<td colspan=4>
 				<?php if (count($hadMovies) > 0) { ?>
-					<em>There are too many movies (<?=count($hadMovies)?>) to show, either narrow your search, or <a href="?showAll<?=$linkRandom?><?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>">show movies anyway.</a></em>
+					<em>There are too many movies (<?=count($hadMovies)?>) to show, either narrow your search, or <a href="?<?=linkURL(array('showAll' => ''))?>">show movies anyway.</a></em>
+					<br><br>
+					<em>Alternatively, try filtering by genre:</em>
+					<?php
+						$genres = array();
+						foreach ($hadMovies as $movie) {
+							$omdb = unserialize($movie->omdb);
+							$g = explode(',', preg_replace('/\s/', '', strtolower($omdb['Genre'])));
+							$genres = array_unique(array_merge($genres, $g));
+						}
+
+						echo genreLabels($genres);
+					?>
+
 				<?php } else { ?>
 				<em>There are no movies to show.</em>
 				<?php } ?>
