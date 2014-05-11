@@ -17,7 +17,7 @@
 			if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_id') {
 				$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid);
 				foreach($trailers->trailer as $trailer) {
-					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' > 'traileraddict_id');
+					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' => 'traileraddict_id');
 				}
 			}
 
@@ -29,14 +29,14 @@
 				if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_name') {
 					$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
 					foreach($trailers->trailer as $trailer) {
-						$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' > 'traileraddict_name');
+						$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' => 'traileraddict_name');
 					}
 				}
 
 				if (count($trailerlist) == 0) {
 					// How annoying, we still found no trailers from traileraddict :(
 					// Fallback to youtube...
-					if ($type == null || $type == 'youtube' ) {
+					if ($type == null || $type == 'youtube') {
 						$url = 'https://gdata.youtube.com/feeds/api/videos?orderby=relevance&format=5&max-results=10&v=2&alt=json&q=' . urlencode($data['Title'] . ' trailer');
 						$items = @json_decode(@file_get_contents($url), true);
 
@@ -51,7 +51,7 @@
 							$embed .= '<param name="allowscriptaccess" value="always" />';
 							$embed .= '</object>';
 
-							$trailerlist[] = array('title' => $title, 'embed' => $embed, 'type' > 'youtube');
+							$trailerlist[] = array('title' => $title, 'embed' => $embed, 'type' => 'youtube');
 						}
 					}
 				}

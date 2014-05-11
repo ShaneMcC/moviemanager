@@ -23,7 +23,7 @@
 
 <div class="pull-left">
 	<form class="form-search" method="post" action="?<?=$linkRandom?><?=$linkGenres?><?=$linkWatched?><?=$linkStarred?>">
-		<input type="text" name="search" class="input-medium search-query" value="<?=htmlspecialchars($_REQUEST['search'])?>">
+		<input type="text" name="search" class="input-medium search-query" value="<?=htmlspecialchars(isset($_REQUEST['search']) ? $_REQUEST['search'] : '')?>">
 		<button type="submit" class="btn">Search</button>
 	</form>
 </div>

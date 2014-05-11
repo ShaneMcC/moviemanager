@@ -28,6 +28,7 @@ $('body').css('background-repeat', 'no-repeat');
 $('body').css('background-attachment', 'fixed');
 </script>
 
+
 <table id="moviedata"  class="table table-striped table-bordered table-condensed">
 	<tbody>
 		<tr class="movie">
@@ -103,7 +104,7 @@ $('body').css('background-attachment', 'fixed');
 				</script>
 			</td>
 		</tr>
-		<? } ?>
+		<?php } ?>
 	</tbody>
 </table>
 
