@@ -10,14 +10,18 @@
 	foreach ($trailers as $t) { if ($t['type'] == 'youtube') { $hasYoutube = true; break; } }
 ?>
 
-<?php if (!$hasYoutube) { ?>
+<?php if (!$hasYoutube || $type == 'youtube') { ?>
 	<div id="youtubebutton">
-		<button class="btn btn-mini" id="searchYoutube" type="button">Search Youtube</button>
+		<?php if (!$hasYoutube) { $searchType = 'youtube'; ?>
+			<button class="btn btn-mini" id="searchYoutube" type="button">Search Youtube</button>
+		<?php } else if ($type == 'youtube') { $searchType = 'trailer'; ?>
+			<button class="btn btn-mini" id="searchYoutube" type="button">Search Trailers</button>
+		<?php } ?>
 		<script>
 			$('#searchYoutube').click(function() {
 				$('#youtubebutton').html('<img src="<?=BASEDIR?>inc/ajax-loader.gif" alt="..." />');
 
-				$.get('<?=BASEDIR?>youtube/<?=$_REQUEST['id']?>', '', function(data) {
+				$.get('<?=BASEDIR?><?=$searchType?>/<?=$_REQUEST['id']?>', '', function(data) {
 					if (data) {
 						$('#trailercontainer').html(data);
 					} else {
@@ -27,7 +31,7 @@
 			});
 		</script>
 	</div>
-	<br><br>
+	<br>
 <?php } ?>
 
 <div id="trailers" class="accordion">
