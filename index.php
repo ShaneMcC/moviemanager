@@ -17,6 +17,8 @@
 	$checkUnstarred = isset($_REQUEST['starred']) && $_REQUEST['starred'] == '0';
 
 	$linkSearch = isset($_REQUEST['search']) && !empty($_REQUEST['search']) ? '&search=' . urlencode($_REQUEST['search']) : '';
+
+	$hasModifiers = !empty($linkGenres) || !empty($linkRandom) || !empty($linkStarred) || !empty($linkWatched) || !empty($linkSearch) || isset($_REQUEST['showAll']);
 ?>
 
 <?php /* TODO: The code for these buttons sucks... This is really fucking **fugly** code.*/ ?>
@@ -108,6 +110,9 @@
 			$showMovies = $randMovies;
 		}
 
+		$hadMovies = $showMovies;
+		if (count($movies) > 200 && !$hasModifiers) { $showMovies = array(); }
+
 		foreach ($showMovies as $movie) {
 			$omdb = unserialize($movie->omdb);
 
@@ -169,6 +174,19 @@
 			<td class="plot"><?=$omdb['Plot']?></td>
 		</tr>
 	<?php } ?>
+
+	<?php if (count($showMovies) == 0) { ?>
+		<tr>
+			<td colspan=4>
+				<?php if (count($hadMovies) > 0) { ?>
+					<em>There are too many movies (<?=count($hadMovies)?>) to show, either narrow your search, or <a href="?showAll<?=$linkRandom?><?=$linkGenres?><?=$linkWatched?><?=$linkStarred?><?=$linkSearch?>">show movies anyway.</a></em>
+				<?php } else { ?>
+				<em>There are no movies to show.</em>
+				<?php } ?>
+			</td>
+		</tr>
+	<?php } ?>
+
 	</tbody>
 
 </table>
