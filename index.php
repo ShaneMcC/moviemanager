@@ -125,7 +125,7 @@
 		}
 
 		$hadMovies = $showMovies;
-		if (count($movies) > 200 && !$hasShowAll) { $showMovies = array(); }
+		if (count($showMovies) > 200 && !$hasShowAll) { $showMovies = array(); }
 
 		foreach ($showMovies as $movie) {
 			$omdb = unserialize($movie->omdb);
