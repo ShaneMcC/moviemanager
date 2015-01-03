@@ -80,7 +80,10 @@ $('body').mouseup(function(e) {
 		</tr>
 		<tr>
 			<th class="directory">Local Directory</th>
-			<td class="directory"><?=$movie->dir?></td>
+			<td class="directory">
+				<?=$movie->dir?>
+				<span class="label label-success" data-clipboard-text="<?=htmlspecialchars($movie->dir)?>">Copy to Clipboard</span>
+			</td>
 		</tr>
 		<?php
 			foreach ($omdb as $key => $value) {
