@@ -23,7 +23,7 @@
 
 				$.get('<?=BASEDIR?><?=$searchType?>/<?=$_REQUEST['id']?>', '', function(data) {
 					if (data) {
-						$('#trailercontainer').html(data);
+						$('#youtubebutton').parent().html(data);
 					} else {
 						$('#youtubebutton').html('<em>No youtube videos found.</em>');
 					}

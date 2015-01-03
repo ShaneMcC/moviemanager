@@ -26,10 +26,22 @@ $('body').css('background-image', 'url("<?=BASEDIR;?>/fanart/<?=$movie->id;?>")'
 $('body').css('background-size', '100%');
 $('body').css('background-repeat', 'no-repeat');
 $('body').css('background-attachment', 'fixed');
+
+$('body').mousedown(function(e) {
+	if(e.target == $('body')[0]) {
+		$('.hideable').stop(true, true).fadeTo(1, 0);
+	}
+});
+
+$('body').mouseup(function(e) {
+	if(e.target == $('body')[0]) {
+		$('.hideable').stop(true, true).fadeTo(1, 1);
+	}
+});
 </script>
 
 
-<table id="moviedata"  class="table table-striped table-bordered table-condensed">
+<table id="moviedata"  class="table table-striped table-bordered table-condensed hideable">
 	<tbody>
 		<tr class="movie">
 			<th class="title" colspan=3>
@@ -79,32 +91,15 @@ $('body').css('background-attachment', 'fixed');
 				echo '</tr>';
 			}
 		?>
-		<?php if (isset($omdb['imdbID'])) { ?>
-	</tbody>
-</table>
-<table id="trailerdata"  class="table table-striped table-bordered table-condensed">
-	<tbody>
-		<tr>
-			<th>Trailer</th>
-		</tr>
-		<tr>
-			<td id="trailercontainer">
-				<img src="<?=BASEDIR?>inc/ajax-loader.gif" alt="..." />
-				<br>
-				<em><small>Loading trailer...</small></em>
-				<script>
-					// Get Trailer.
-					$.get('<?=BASEDIR?>trailer/<?=$movie->id?>', '', function(data) {
-						if (data) {
-							$('#trailercontainer').html(data);
-						} else {
-							$('#trailerdata').hide();
-						}
-					});
-				</script>
-			</td>
-		</tr>
-		<?php } ?>
+
+<?php
+	if (isset($config['plex']['servers']) && !empty($config['plex']['servers'])) {
+		showAJAXPanel('Plex', BASEDIR . 'plex/' . $movie->id);
+	}
+
+	showAJAXPanel('Trailer', BASEDIR . 'trailer/' . $movie->id);
+?>
+
 	</tbody>
 </table>
 

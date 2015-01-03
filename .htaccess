@@ -7,6 +7,8 @@ RewriteRule ^/?fanart/([0-9]+) poster.php?fanart&id=$1 [L]
 RewriteRule ^/?trailer/([0-9]+) trailer.php?id=$1 [L]
 RewriteRule ^/?youtube/([0-9]+) trailer.php?youtube&id=$1 [L]
 RewriteRule ^/?movie/([0-9]+) movie.php?id=$1 [L]
+RewriteRule ^/?plex/([0-9]+) plex.php?id=$1 [L]
+RewriteRule ^/?plexproxy/([0-9]+)/(.+)$ plexproxy.php?id=$1&url=$2 [L]
 RewriteRule ^/?setstarred/([0-9]+) setStarred.php?id=$1 [L]
 RewriteRule ^/?setwatched/([0-9]+) setWatched.php?id=$1 [L]
 

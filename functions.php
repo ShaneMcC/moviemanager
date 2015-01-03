@@ -131,4 +131,35 @@
 			/* Do Nothing */
 		}
 	}
+
+
+	function showAJAXPanel($title, $url) {
+		$panelid = uniqid(crc32($title));
+		?>
+		<table id="panel<?=$panelid?>"  class="table table-striped table-bordered table-condensed hideable">
+			<tbody>
+				<tr>
+					<th><?=htmlspecialchars($title)?></th>
+				</tr>
+				<tr>
+					<td id="panelcontainer<?=$panelid?>" class="panelcontainer">
+						<img src="<?=BASEDIR?>inc/ajax-loader.gif" alt="..." />
+						<br>
+						<em><small>Loading...</small></em>
+						<script>
+							// Get Trailer.
+							$.get('<?=$url?>', '', function(data) {
+								if (data) {
+									$('#panelcontainer<?=$panelid?>').html(data);
+								} else {
+									$('#panel<?=$panelid?>').hide();
+								}
+							});
+						</script>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+	}
 ?>

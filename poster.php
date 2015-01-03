@@ -1,11 +1,11 @@
 <?php
 	require_once(dirname(__FILE__) . '/functions.php');
-	
+
 	$movie = Movie::getFromID($_REQUEST['id']);
 	$remotePoster = false;
 
 	if (isset($_REQUEST['fanart'])) {
-		if (file_exists($movie->dir . '/fanart.jpg')) {	
+		if (file_exists($movie->dir . '/fanart.jpg')) {
 			$poster = $movie->dir . '/fanart.jpg';
 		} else {
 			foreach (glob($movie->dir . '/*-fanart.jpg') as $fanart) {
@@ -16,8 +16,7 @@
 	} else if (file_exists($movie->dir . '/movie.tbn')) {
 		$poster = $movie->dir . '/movie.tbn';
 	} else if (empty($movie->poster) || $movie->poster == 'N/A') {
-		$poster = 'http://t0.gstatic.com/images?q=tbn:ANd9GcQalw3XeNDg49Z24Sy-KO5pLtfCYDnU87_kKkwnDiKWv8S2zz9IryY_SEJk';
-		$remotePoster = true;
+		$poster = dirname(__FILE__) . '/inc/noposter.jpg';
 	} else {
 		$poster = $movie->poster;
 		$remotePoster = true;

@@ -106,8 +106,13 @@ tr.movie .thumbnails>li {
 /**********************************************************************
  * Movie Information
  **********************************************************************/
-#trailercontainer {
-	text-align: center;
+img.moviethumb {
+	/* width: 300px; */
+	height: 150px;
+}
+
+.panelcontainer {
+	text-align: center !important;
 }
 
 #moviedata td.fullposter {
