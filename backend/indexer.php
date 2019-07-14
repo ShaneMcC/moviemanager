@@ -14,7 +14,7 @@
 
 			$movie = Movie::getFromDir($pathid, $moviedir);
 
-			if (empty($movie->name) || empty($movie->imdbid) || empty($movie->omdb) || $movie->deleted) {
+			if (empty($movie->name) || empty($movie->imdbid) || empty($movie->omdb) || $movie->deleted == 'true') {
 				if (empty($movie->name)) {
 					$movieFiles = getMovieFiles();
 					if (empty($movieFiles)) { continue; }
@@ -34,6 +34,7 @@
 				if (!empty($movie->imdbid)) {
 					$newData = getOMDBDataForMovie($movie->imdbid);
 					if ($newData !== false) {
+						$newData['deleted'] = 'false';
 						$movie->setData($newData);
 						echo "\t", 'Detected movie as: ', $newData['name'], "\n";
 						foundNewMovie($movie);
