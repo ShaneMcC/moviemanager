@@ -19,4 +19,3 @@
 			return $this->getData(sprintf('%s?i=%s', $this->url, urlencode($id)));
 		}
 	}
-?>

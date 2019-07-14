@@ -110,4 +110,3 @@ $('body').mouseup(function(e) {
 
 <?php
 	include(dirname(__FILE__) . '/inc/footer.php');
-?>

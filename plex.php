@@ -6,10 +6,13 @@
 	if (!isset($config['plex']['servers']) || empty($config['plex']['servers'])) { die(); }
 	if (empty($movie->name)) { die(); }
 
+	ob_start();
 	echo '<ul class="thumbnails">';
 
+	$found = false;
 	foreach ($config['plex']['servers'] as $id => $server) {
 		$serverinfo = simplexml_load_string(file_get_contents('http://' . $server . '/'));
+		if ($serverinfo === false) { continue; }
 		$servername = $serverinfo->attributes()->friendlyName;
 		$serverid = $serverinfo->attributes()->machineIdentifier;
 
@@ -17,6 +20,7 @@
 		$xml = simplexml_load_string(file_get_contents($searchurl));
 
 		foreach ($xml->Video as $video) {
+			$found = true;
 			$plexURL = 'http://plex.tv/web/app#!/server/'.$serverid.'/details/'.urlencode($video->attributes()->key);
 
 			echo '<li><a href="', $plexURL, '" class="thumbnail">';
@@ -28,4 +32,5 @@
 	}
 
 	echo '</ul>';
-?>
+
+	if ($found) { ob_end_flush(); } else { ob_end_clean(); }

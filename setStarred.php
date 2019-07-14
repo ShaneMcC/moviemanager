@@ -7,4 +7,3 @@
 	// Toggle value and return new value.
 	getUser()->setStarred($movie->id, !getUser()->hasStarred($movie->id));
 	echo getUser()->hasStarred($movie->id)? 'true' : 'false';
-?>

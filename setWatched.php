@@ -7,4 +7,3 @@
 	// Toggle value and return new value.
 	getUser()->setWatched($movie->id, !getUser()->hasWatched($movie->id));
 	echo getUser()->hasWatched($movie->id)? 'true' : 'false';
-?>
