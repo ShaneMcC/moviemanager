@@ -131,6 +131,10 @@
 			/* Do Nothing */
 		}
 
+		function movieDataUpdated($movie) {
+			/* Do Nothing */
+		}
+
 		function removedMovie($movie) {
 			/* Do Nothing */
 		}

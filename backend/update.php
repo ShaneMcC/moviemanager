@@ -19,19 +19,41 @@
 
 		// Check to see if we still agree with the IMDB id...
 
+		$oldData = $movie->getData();
+
+		$getNewData = false;
+
 		echo "\t", 'Updating IMDB ID..', "\n";
 		$imdbID = getIMDBIDFromDir($movie, true);
 		if (!empty($imdbID) && $imdbID != $movie->imdbid) {
 			echo "\t\t\t\t", 'New IMDB ID does not match old ID (',$imdbID,' != ',$movie->imdbid,'), fixing...', "\n";
+			$getNewData = true;
+		}
 
+		if (empty($oldData['omdb'])) {
+			echo "\t\t\t\t", 'OMDB Data is empty, fixing...', "\n";
+			$getNewData = true;
+		}
+
+		if ($getNewData) {
 			$newData = getOMDBDataForMovie($imdbID);
 			if ($newData !== false) {
 				$newData['imdbid'] = $imdbID;
-				removedMovie($movie);
-				$oldName = $movie->name;
+
+				if ($oldName != $newData['name']) {
+					removedMovie($movie);
+					$oldName = $movie->name;
+				}
+
 				$movie->setData($newData);
-				foundNewMovie($movie);
-				echo "\t", 'Movie renamed from ', $oldName, ' to: ', $newData['name'], "\n";
+
+				if ($oldName != $newData['name']) {
+					foundNewMovie($movie);
+					echo "\t", 'Movie renamed from ', $oldName, ' to: ', $newData['name'], "\n";
+				} else {
+					movieDataUpdated($movie);
+					echo "\t", 'Movie data updated.', "\n";
+				}
 			}
 		}
 
