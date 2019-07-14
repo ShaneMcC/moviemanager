@@ -67,7 +67,9 @@
 	}
 
 	function getMovieFiles($directory) {
-		$movieFiles = [];
+		$movieFiles = array();
+		if (!file_exists($directory)) { return array(); }
+
 		foreach (scandir($directory) as $file) {
 			if (in_array($file, array('.', '..', 'fanart.jpg', 'poster.jpg'))) { continue; }
 
