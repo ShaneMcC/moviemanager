@@ -8,6 +8,8 @@
 		}
 
 		function getTrailers($type = null) {
+			global $config;
+
 			$o = unserialize($this->omdb);
 			$imdbid = preg_replace('/^tt/', '', $o['imdbID']);
 			$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
@@ -23,7 +25,7 @@
 
 			if (count($trailerlist) == 0) {
 				// Failed by imdbid, try by name instead.
-				$omdb = new OMDB();
+				$omdb = new OMDB($config['omdb']['apikey']);
 				list($result, $data) = $omdb->findByIMDB('tt'.$imdbid);
 				$name = str_replace(' ', '-', strtolower($data['Title']));
 				if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_name') {

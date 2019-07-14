@@ -41,7 +41,7 @@
 
 
 	die();
-	$omdb = new OMDB();
+	$omdb = new OMDB($config['omdb']['apikey']);
 
 	$dirs = getDirectories();
 

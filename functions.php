@@ -67,6 +67,8 @@
 	}
 
 	function getIMDBIDFromDir($movie, $debug = false) {
+		global $config;
+
 		$nfos = array();
 		// Prioritise original NFO first...
 		$nfos = array_merge($nfos, glob($movie->dir . '/*.orig.nfo'));
@@ -83,7 +85,7 @@
 		}
 
 		if (preg_match('/^(.*) \(([0-9]+)\)$/', $movie->dirname, $m)) {
-			$omdb = new OMDB();
+			$omdb = new OMDB($config['omdb']['apikey']);
 			if ($debug) { echo "\t\t", 'No useful nfo, guessing from title', "\n"; }
 			list($result, $res) = $omdb->findByNameAndYear($m[1], $m[2]);
 
@@ -97,7 +99,9 @@
 	}
 
 	function getOMDBDataForMovie($imdbid) {
-		$omdb = new OMDB();
+		global $config;
+
+		$omdb = new OMDB($config['omdb']['apikey']);
 		list($result, $data) = $omdb->findByIMDB($imdbid);
 		if ($result) {
 			$newData = array();
