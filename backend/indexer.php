@@ -15,10 +15,10 @@
 			$movie = Movie::getFromDir($pathid, $moviedir);
 
 			if (empty($movie->name) || empty($movie->imdbid) || empty($movie->omdb) || $movie->deleted == 'true') {
-				if (empty($movie->name)) {
-					$movieFiles = getMovieFiles($path . $moviedir);
-					if (empty($movieFiles)) { continue; }
+				$movieFiles = getMovieFiles($path . $moviedir);
+				if (empty($movieFiles)) { continue; }
 
+				if (empty($movie->name)) {
 					echo 'Found new movie: ', $moviedir, "\n";
 				} else {
 					echo 'Found previously known movie: ', $moviedir, "\n";
