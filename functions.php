@@ -71,7 +71,7 @@
 		foreach (scandir($directory) as $file) {
 			if (in_array($file, array('.', '..', 'fanart.jpg', 'poster.jpg'))) { continue; }
 
-			$realFiles[] = $file;
+			$movieFiles[] = $file;
 		}
 
 		return $movieFiles;
