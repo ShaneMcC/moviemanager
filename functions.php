@@ -66,6 +66,17 @@
 		<?php
 	}
 
+	function getMovieFiles($directory) {
+		$movieFiles = [];
+		foreach (scandir($directory) as $file) {
+			if (in_array($file, array('.', '..', 'fanart.jpg', 'poster.jpg'))) { continue; }
+
+			$realFiles[] = $file;
+		}
+
+		return $movieFiles;
+	}
+
 	function getIMDBIDFromDir($movie, $debug = false) {
 		global $config;
 

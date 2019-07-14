@@ -4,12 +4,20 @@
 
 	$movies = Movie::getMovies();
 
+	$total = count($movies);
+	$i = 0;
+
 	foreach ($movies as $movie) {
-		echo 'Updating movie dir: ', $movie->dirname, "\n";
+		echo 'Updating movie dir: ', $movie->dirname, ' [', $i, '/', $total, '] {ID: ', $movie->id, '}', "\n";
 
 		// Check to see if it still exists...
 		if (file_exists($movie->dir)) {
 			$movie->setData(array('deleted' => 'false'));
+		} else if (empty($movieFiles)) {
+			echo "\t", 'Movie has no more files..', "\n";
+			removedMovie($movie);
+			$movie->setData(array('deleted' => 'true'));
+			continue;
 		} else {
 			echo "\t", 'Movie has been deleted..', "\n";
 			removedMovie($movie);
@@ -19,7 +27,7 @@
 
 		// Check to see if we still agree with the IMDB id...
 
-		$oldData = $movie->getData();
+		$oldOMDB = $movie->omdb;
 
 		$getNewData = false;
 
@@ -30,7 +38,7 @@
 			$getNewData = true;
 		}
 
-		if (empty($oldData['omdb'])) {
+		if (empty($oldOMDB)) {
 			echo "\t\t\t\t", 'OMDB Data is empty, fixing...', "\n";
 			$getNewData = true;
 		}
