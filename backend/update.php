@@ -8,16 +8,19 @@
 	$i = 0;
 
 	foreach ($movies as $movie) {
-		echo 'Updating movie dir: ', $movie->dirname, ' [', $i, '/', $total, '] {ID: ', $movie->id, '}', "\n";
+		echo 'Updating movie dir: ', $movie->dirname, ' [', $i++, '/', $total, '] {ID: ', $movie->id, '}', "\n";
+
+		$movieFiles = getMovieFiles($movie->dir);
 
 		// Check to see if it still exists...
 		if (file_exists($movie->dir)) {
 			$movie->setData(array('deleted' => 'false'));
-		} else if (empty($movieFiles)) {
-			echo "\t", 'Movie has no more files..', "\n";
-			removedMovie($movie);
-			$movie->setData(array('deleted' => 'true'));
-			continue;
+			if (empty($movieFiles)) {
+				echo "\t", 'Movie has no more files..', "\n";
+				removedMovie($movie);
+				$movie->setData(array('deleted' => 'true'));
+				continue;
+			}
 		} else {
 			echo "\t", 'Movie has been deleted..', "\n";
 			removedMovie($movie);
