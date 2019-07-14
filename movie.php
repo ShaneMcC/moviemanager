@@ -86,13 +86,24 @@ $('body').mouseup(function(e) {
 			</td>
 		</tr>
 		<?php
-			foreach ($omdb as $key => $value) {
-				$key = htmlspecialchars($key);
-				echo '<tr>';
-				echo '<th class="', strtolower($key), '">', $key, '</th>';
-				echo '<td class="', strtolower($key), '">', htmlspecialchars($value), '</td>';
-				echo '</tr>';
+			function displayValues($data) {
+				foreach ($data as $key => $value) {
+					$key = htmlspecialchars($key);
+					echo '<tr>';
+					echo '<th class="', strtolower($key), '">', $key, '</th>';
+					if (is_array($value)) {
+						echo '<td class="', strtolower($key), '">';
+						echo '<table class="table table-striped table-bordered table-condensed hideable"><tbody><tr>';
+						displayValues($value);
+						echo '</tr></tbody></table>';
+						echo '</td>';
+					} else {
+						echo '<td class="', strtolower($key), '">', htmlspecialchars($value), '</td>';
+					}
+					echo '</tr>';
+				}
 			}
+			displayValues($omdb);
 		?>
 
 <?php
