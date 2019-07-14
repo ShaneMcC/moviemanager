@@ -16,6 +16,9 @@
 
 			if (empty($movie->name) || empty($movie->imdbid) || empty($movie->omdb) || $movie->deleted) {
 				if (empty($movie->name)) {
+					$movieFiles = getMovieFiles();
+					if (empty($movieFiles)) { continue; }
+
 					echo 'Found new movie: ', $moviedir, "\n";
 				} else {
 					echo 'Found previously known movie: ', $moviedir, "\n";
