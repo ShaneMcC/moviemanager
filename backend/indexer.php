@@ -14,8 +14,12 @@
 
 			$movie = Movie::getFromDir($pathid, $moviedir);
 
-			if (empty($movie->name)) {
-				echo 'Found new movie: ', $moviedir, "\n";
+			if (empty($movie->name) || empty($movie->imdbid) || empty($movie->omdb) || $movie->deleted) {
+				if (empty($movie->name)) {
+					echo 'Found new movie: ', $moviedir, "\n";
+				} else {
+					echo 'Found previously known movie: ', $moviedir, "\n";
+				}
 
 				if (empty($movie->imdbid)) {
 					echo "\t", 'No IMDB ID Known.', "\n";
