@@ -83,6 +83,9 @@ $('body').mouseup(function(e) {
 			<td class="directory">
 				<?=$movie->dir?>
 				<span class="label label-success" data-clipboard-text="<?=htmlspecialchars($movie->dir)?>">Copy to Clipboard</span>
+				<?php if (isset($config['showLocalOpen']) && $config['showLocalOpen']) { ?>
+					<a href="localopen:<?=htmlspecialchars($movie->dir)?>"><span class="label label-warning">Open Folder</span></a>
+				<?php } ?>
 			</td>
 		</tr>
 		<?php

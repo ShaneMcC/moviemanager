@@ -12,6 +12,8 @@
 	$config['traileraddict']['apikey'] = '';
 	$config['youtube']['apikey'] = '';
 
+	$config['showLocalOpen'] = false;
+
 	if (file_exists(dirname(__FILE__) . '/config.local.php')) {
 		require_once(dirname(__FILE__) . '/config.local.php');
 	}
