@@ -5,7 +5,7 @@
 	$config['db']['user'] = 'moviemanager';
 	$config['db']['pass'] = 'moviemanager';
 
-	$config['plex']['servers'] = array('127.0.0.1:32400');
+	$config['plex']['servers'] = array(['url' => '127.0.0.1:32400', 'secure' => true, 'token' => 'SomeToken']);
 
 	$config['omdb']['apikey'] = '';
 	$config['tmdb']['apikey'] = '';

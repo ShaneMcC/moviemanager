@@ -8,7 +8,13 @@
 	if (empty($url)) { die(); }
 	if (empty($id) && $id !== '0') { die(); }
 
-	$ch = curl_init('http://'.$config['plex']['servers'][$id].'/'.$url);
+	$data = $config['plex']['servers'][$id];
+	if (!isset($data['token']) || !isset($data['url'])) { die(); }
+
+	$token = $data['token'];
+	$serverurl = $data['url'];
+
+	$ch = curl_init('http://'.$data['url'].'/'.$url.'?X-Plex-Token=' . urlencode($token));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_VERBOSE, 0);
 	curl_setopt($ch, CURLOPT_HEADER, 1);
@@ -22,4 +28,3 @@
 	}
 
 	echo $body;
-?>
