@@ -7,63 +7,93 @@
 			}
 		}
 
-		function getTrailers($type = null) {
+		function getTrailers($wantedType = null) {
 			global $config;
+
+			$type = $wantedType;
+			if ($type == null) {
+				if (!empty($config['traileraddict']['apikey'])) {
+					$type = 'traileraddict';
+				} else if (!empty($config['tmdb']['apikey'])) {
+					$type = 'tmdb';
+				} else if (!empty($config['youtube']['apikey'])) {
+					$type = 'youtube';
+				} else {
+					$type = '';
+				}
+			}
 
 			$o = unserialize($this->omdb);
 			$imdbid = preg_replace('/^tt/', '', $o['imdbID']);
 			$imdbid = preg_replace('/[^0-9]/', '', $imdbid);
 
+			$title = $o['Title'];
+
 			$trailerlist = array();
 
-			if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_id') {
-				$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&imdb='.$imdbid);
-				foreach($trailers->trailer as $trailer) {
+			// TODO: This needs an API Key now as well.
+			if ($type == 'traileraddict' || $type == 'traileraddict_id') {
+				$trailers = simplexml_load_file('http://api.traileraddict.com/?api_key=' . urlencode($config['traileraddict']['apikey']) .'count=10&width=900&imdb='.$imdbid);
+				foreach ($trailers->trailer as $trailer) {
 					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' => 'traileraddict_id');
 				}
 			}
 
-			if (count($trailerlist) == 0) {
-				// Failed by imdbid, try by name instead.
-				$omdb = new OMDB($config['omdb']['apikey']);
-				list($result, $data) = $omdb->findByIMDB('tt'.$imdbid);
-				$name = str_replace(' ', '-', strtolower($data['Title']));
-				if ($type == null || $type == 'traileraddict' || $type == 'traileraddict_name') {
-					$trailers = simplexml_load_file('http://api.traileraddict.com/?count=10&width=900&film='.$name);
-					foreach($trailers->trailer as $trailer) {
-						$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' => 'traileraddict_name');
-					}
+			if (($type == 'traileraddict' && count($trailerlist) == 0) || $type == 'traileraddict_name') {
+				$name = str_replace(' ', '-', strtolower($o['Title']));
+				$trailers = simplexml_load_file('http://api.traileraddict.com/?api_key=' . urlencode($config['traileraddict']['apikey']) .'count=10&width=900&film='.$name);
+				foreach ($trailers->trailer as $trailer) {
+					$trailerlist[] = array('title' => (string)$trailer->title, 'embed' => (string)$trailer->embed, 'type' => 'traileraddict_name');
 				}
+			}
 
-				if (count($trailerlist) == 0) {
-					// How annoying, we still found no trailers from traileraddict :(
-					// Fallback to youtube...
-					if ($type == null || $type == 'youtube') {
-						$url = 'https://gdata.youtube.com/feeds/api/videos?orderby=relevance&format=5&max-results=10&v=2&alt=json&q=' . urlencode($data['Title'] . ' trailer');
-						$items = @json_decode(@file_get_contents($url), true);
+			if ($type == 'tmdb') {
+				$url = 'https://api.themoviedb.org/3/find/tt' . $imdbid . '?api_key=' . urlencode($config['tmdb']['apikey']) . '&external_source=imdb_id';
+				$data = @json_decode(@file_get_contents($url), true);
 
-						foreach ($items['feed']['entry'] as $entry) {
-							$title = $entry['title']['$t'];
-							$content = $entry['content']['src'];
-							$id = $entry['id']['$t'];
-							$embed = '';
-							$embed .= '<object type="application/x-shockwave-flash" style="width:900px;height:506px;">';
-							$embed .= '<param name="movie" value="' . $content. '&amp;rel=0&amp;hd=1&amp;showsearch=0" />';
-							$embed .= '<param name="allowFullScreen" value="true" />';
-							$embed .= '<param name="allowscriptaccess" value="always" />';
-							$embed .= '</object>';
+				$tmdbID = isset($data['movie_results'][0]['id']) ? $data['movie_results'][0]['id'] : '';
+				if (!empty($tmdbID)) {
+					$url = 'https://api.themoviedb.org/3/movie/' . $tmdbID . '/videos?api_key=' . urlencode($config['tmdb']['apikey']);
+					$data = @json_decode(@file_get_contents($url), true);
 
-							$trailerlist[] = array('title' => $title, 'embed' => $embed, 'type' => 'youtube');
+					foreach ($data['results'] as $video) {
+						if (strtolower($video['site']) == 'youtube') {
+							$embed = '<iframe width="900" height="506" src="https://www.youtube.com/embed/' . $video['key'] . '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+						} else {
+							$embed = '<pre>' . htmlspecialchars(json_encode($video)) . '</pre>';
 						}
+
+						$trailerlist[] = array('title' => $video['type'] . ': ' . $video['name'], 'embed' => $embed, 'type' => 'tmdb');
 					}
 				}
+			}
+
+			if ($type == 'youtube') {
+				$url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' . urlencode($config['youtube']['apikey']) . '&q=' . urlencode($title . ' trailer');
+				$items = @json_decode(@file_get_contents($url), true);
+
+				foreach ($items['items'] as $entry) {
+
+					$title = $entry['snippet']['title'];
+					$id = $entry['id']['videoId'];
+
+					$embed = '<iframe width="900" height="506" src="https://www.youtube.com/embed/' . $id . '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+
+					$trailerlist[] = array('title' => $title, 'embed' => $embed, 'type' => 'youtube');
+				}
+			}
+
+			// If we got no results and this was a non-default search then
+			// try falling back to the default
+			if (count($trailerlist) == 0 && $wantedType != null) {
+				$trailerlist = getTrailers(null);
 			}
 
 			return $trailerlist;
 		}
 
 		function setData($data) {
-			if (count($data) == 0) { continue; }
+			if (count($data) == 0) { return; }
 			$db = getDB();
 
 			$params = array(':id' => $this->id);
