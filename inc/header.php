@@ -17,7 +17,7 @@
 	<script src="<?=BASEDIR?>/bootstrap/js/jquery.js"></script>
 	<script src="<?=BASEDIR?>/bootstrap/js/bootstrap.min.js"></script>
 
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
 
